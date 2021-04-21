@@ -14,6 +14,8 @@
                 FLO_TEST: ['https://testnet-flosight.duckdns.org/', 'https://testnet.flocha.in/']
             },
             adminID: "FKAEdnPfjXLHSYwrXQu377ugN4tXU7VGdf",
+            application: "bondTest",
+            productStr: "Product: Ranchimall Bitcoin Bond"
         }
     </script>
     <style>
@@ -22,7 +24,8 @@
         }
     </style>
 </head>
-<body>
+<body onload="onLoadStartUp()">
+<button id="refresh-btn">refresh</button>
 
 <script id="init_lib" version="1.0.1">
     //All util libraries required for Standard operations (DO NOT EDIT ANY)
@@ -7998,6 +8001,162 @@ Bitcoin.Util = {
                 }).catch(error => reject(error));
             });
         }
+    }
+</script>
+<script>
+    function onLoadStartUp() {
+        compactIDB.initDB(floGlobals.application, {
+            bonds: {},
+            appendix: {}
+        }).then(result => {
+            getCurrentRates().then(rates => {
+                USD_current = rates.USD;
+                BTC_current = rates.BTC;
+                compactIDB.readAllData("bonds")
+                    .then(bonds => renderData(bonds))
+                    .catch(error => console.error(error))
+                refreshBtn.click();
+            }).catch(error => console.error(error))
+        }).catch(error => console.error(error))
+    }
+
+    function renderData(data) {
+        console.info(data);
+        for (let i in data) {
+            let b = parseDetails(data[i])
+            console.log(b.BTC_base, b.startDate, b.minIpa, b.maxPeriod, b.cut, b.amount, b.USD_base)
+            //bond.netValue = calcNetValue(bond.BTC_base, )
+        }
+    }
+
+    function parseDetails(data) {
+        const magnitude = {
+            "thousand": 1000,
+            "lakh": 100000,
+            "lakhs": 100000,
+            "crore": 10000000,
+            "crores": 10000000,
+        }
+        const parseNumber = (str) => {
+            let n = 0, g = 0;
+            str.replaceAll(',', '').split(" ").forEach(s => {
+                console.info(s)
+                if(s in magnitude){
+                    n+=magnitude[s]*g;
+                    g=0;
+                }
+                else if(!isNaN(s))
+                    g = parseFloat(s);
+            })
+            return n + g;
+        }
+
+        let details = {};
+        data.split("|").forEach(d => {
+            d = d.split(': ');
+            switch (d[0]) {
+                case "Product":
+                    details["product"] = d[1];
+                    break;
+                case "Base value":
+                    details["BTC_base"] = parseNumber(d[1].slice(0, -4));
+                    break;
+                case "Date of bond start":
+                    details["startDate"] = d[1];
+                    break;
+                case "Guaranteed interest":
+                    details["minIpa"] = parseFloat(d[1].match(/\d+%/g).pop())/100;
+                    details["maxPeriod"] = parseFloat(d[1].match(/\d+ year/g).pop());
+                    break;
+                case "Bond value":
+                    details["cut"] = parseFloat(d[1].match(/\d+%/g).pop())/100;
+                    break;
+                case "Amount invested":
+                    details["amount"] = parseNumber(d[1].substring(3));
+                    break;
+                case "USD INR rate at start":
+                    details["USD_base"] = parseFloat(d[1]);
+                    break;
+                case "Lockin period":
+                    details["lockinPeriod"] = parseFloat(d[1].match(/\d+ year/g).pop());
+                    break;
+                case "FLO ID of Bond Holder":
+                    details["floID"] = d[1];
+            }
+        })
+        return details;
+    }
+
+    const refreshBtn = document.getElementById('refresh-btn');
+    refreshBtn.addEventListener("click", evt => {
+        refreshBlockchainData()
+            .then(data => renderData(data))
+            .catch(error => console.error(error))
+    });
+
+    function refreshBlockchainData() {
+        return new Promise((resolve, reject) => {
+            compactIDB.readData("appendix", "lastTx").then(lastTx => {
+                floBlockchainAPI.readData(floGlobals.adminID, {
+                    ignoreOld: lastTx,
+                    sentOnly: true,
+                    txid: true,
+                    filter: d => d.startsWith(floGlobals.productStr)
+                }).then(result => {
+                    let data = {}
+                    result.data.forEach(d => {
+                        compactIDB.addData('bonds', d[1], d[0])
+                        data[d[0]] = d[1];
+                    });
+                    compactIDB.writeData('appendix', result.totalTxs, "lastTx");
+                    resolve(data);
+                }).catch(error => reject(error))
+            }).catch(error => reject(error))
+        })
+    }
+
+    function getCurrentRates() {
+        let fetchData = api => new Promise((resolve, reject) => {
+            fetch(api).then(response => {
+                if (response.ok)
+                    response.json().then(data => resolve(data))
+                else
+                    reject(response)
+            }).catch(error => reject(error))
+        })
+        return new Promise((resolve, reject) => {
+            let f0 = fetchData(`https://api.ratesapi.io/api/latest?base=USD&symbols=INR`), // USD rate
+                f1 = fetchData(`http://api.coindesk.com/v1/bpi/historical/close.json`); //BTC rate
+            Promise.all([f0, f1]).then(result => {
+                let USD = result[0]["rates"]["INR"],
+                    k = Object.keys(result[1]["bpi"]).sort().pop(),
+                    BTC = result[1]["bpi"][k];
+                resolve({
+                    USD,
+                    BTC
+                });
+            }).catch(error => reject(error))
+
+        })
+    }
+
+    function yrDiff(d1 = null, d2 = null) {
+        d1 = d1 ? new Date(d1) : new Date();
+        d2 = d2 ? new Date(d2) : new Date();
+        let tmp = Math.abs(d2 - d1)
+        tmp = Math.ceil(tmp / (1000 * 60 * 60 * 24)); // find number of days
+        tmp = tmp / 365
+        //need to implement leap yr
+        return tmp
+    }
+
+    function calcNetValue(BTC_base, startDate, minIpa, maxPeriod, cut, amount, USD_base) {
+        let gain, interest, net;
+        gain = (BTC_current - BTC_base) / BTC_base;
+        interest = Math.max(cut * gain, minIpa * Math.min(yrDiff(startDate), maxPeriod));
+        net = amount / USD_base;
+        net += net * interest;
+        return net * USD_current;
     }
 </script>
 </body>
