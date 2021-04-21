@@ -15,7 +15,9 @@
             },
             adminID: "FKAEdnPfjXLHSYwrXQu377ugN4tXU7VGdf",
             application: "bondTest",
-            productStr: "Product: Ranchimall Bitcoin Bond"
+            productStr: "Product: Ranchimall Bitcoin Bond",
+            sendAmt: 0.001,
+            fee: 0.0005
         }
     </script>
     <style>
@@ -8038,14 +8040,13 @@ Bitcoin.Util = {
             "crores": 10000000,
         }
         const parseNumber = (str) => {
-            let n = 0, g = 0;
+            let n = 0,
+                g = 0;
             str.replaceAll(',', '').split(" ").forEach(s => {
-                console.info(s)
-                if(s in magnitude){
-                    n+=magnitude[s]*g;
-                    g=0;
-                }
-                else if(!isNaN(s))
+                if (s in magnitude) {
+                    n += magnitude[s] * g;
+                    g = 0;
+                } else if (!isNaN(s))
                     g = parseFloat(s);
             })
             return n + g;
@@ -8054,33 +8055,33 @@ Bitcoin.Util = {
         let details = {};
         data.split("|").forEach(d => {
             d = d.split(': ');
-            switch (d[0]) {
-                case "Product":
+            switch (d[0].toLowerCase()) {
+                case "product":
                     details["product"] = d[1];
                     break;
-                case "Base value":
+                case "base value":
                     details["BTC_base"] = parseNumber(d[1].slice(0, -4));
                     break;
-                case "Date of bond start":
+                case "date of bond start":
                     details["startDate"] = d[1];
                     break;
-                case "Guaranteed interest":
-                    details["minIpa"] = parseFloat(d[1].match(/\d+%/g).pop())/100;
+                case "guaranteed interest":
+                    details["minIpa"] = parseFloat(d[1].match(/\d+%/g).pop()) / 100;
                     details["maxPeriod"] = parseFloat(d[1].match(/\d+ year/g).pop());
                     break;
-                case "Bond value":
-                    details["cut"] = parseFloat(d[1].match(/\d+%/g).pop())/100;
+                case "bond value":
+                    details["cut"] = parseFloat(d[1].match(/\d+%/g).pop()) / 100;
                     break;
-                case "Amount invested":
+                case "amount invested":
                     details["amount"] = parseNumber(d[1].substring(3));
                     break;
-                case "USD INR rate at start":
+                case "usd inr rate at start":
                     details["USD_base"] = parseFloat(d[1]);
                     break;
-                case "Lockin period":
+                case "lockin period":
                     details["lockinPeriod"] = parseFloat(d[1].match(/\d+ year/g).pop());
                     break;
-                case "FLO ID of Bond Holder":
+                case "flo id of bond holder":
                     details["floID"] = d[1];
             }
         })
@@ -8157,6 +8158,29 @@ Bitcoin.Util = {
         net = amount / USD_base;
         net += net * interest;
         return net * USD_current;
+    }
+
+    function addBond(privKey, BTC_base, start_date, guaranteed_interest, guarantee_period, gain_cut, amount, USD_base, lockin, floID) {
+        return new Promise((resolve, reject) => {
+            let str = [
+                `Product: RanchiMall Bitcoin Bond`,
+                `Base value: ${BTC_base} USD`,
+                `Date of bond start: ${start_date}`,
+                `Guaranteed interest: ${guaranteed_interest}% per annum simple for ${guarantee_period} years`,
+                `Bond value: guaranteed interest or ${gain_cut}% of the gains whichever is higher`,
+                `Amount invested: Rs ${amount}`,
+                `USD INR rate at start: ${USD_base}`,
+                `Lockin period: ${lockin} years`,
+                `FLO ID of Bond Holder: ${floID}`
+            ]
+            console.info(str.join('|'))
+            return;
+            if (!floCrypto.verifyPrivKey(privKey, floGlobals.adminID))
+                return reject("Access Denied");
+            floBlockchainAPI.writeData(floGlobals.adminID, str.join("|"), privKey, floID)
+                .then(result => resolve(result))
+                .catch(error => reject(error))
+        });
     }
 </script>
 </body>
