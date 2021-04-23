@@ -33,9 +33,9 @@
 <body onload="onLoadStartUp()">
 
 <h3>RanchiMall Bitcoin Bonds</h3>
-Current USD rate: <span id="usd-rate"></span> INR <br/>
-Current BTC rate: <span id="btc-rate"></span> USD <br/>
-<hr/>
+Current BTC rate: <span id="btc-usd-rate"></span> USD | <span id="btc-inr-rate"></span> INR<br />
+Current USD rate: <span id="usd-rate"></span> INR <br />
+<hr />
 <form id="add-bond-form">
     FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br />
     Amount: <input type="text" name="amount" pattern="\d.+"><br />
@@ -58,27 +58,34 @@ Current BTC rate: <span id="btc-rate"></span> USD <br/>
         <option value="week(s)">week(s)</option>
         <option value="day(s)">day(s)</option>
     </select><br />
-    <input type="submit" value="Add Bond"/><input type="reset" value="Clear">
+    <input type="submit" value="Add Bond" /><input type="reset" value="Clear">
 </form>
-<hr/>
+<hr />
 <button id="refresh-btn">refresh</button>
 <table id="bond-list">
-    <tr>
-        <th rowspan="2"></th>
-        <th rowspan="2">FLO ID</th>
-        <th rowspan="2">Date of bond start</th>
-        <th rowspan="2">Amount (INR)</th>
-        <th rowspan="2">Net Bond value (INR)</th>
-        <th rowspan="2">Base value (USD)</th>
-        <th rowspan="2">USD rate (INR)</th>
-        <th colspan="2">Guaranteed interest </th>
-        <th rowspan="2">Gain share</th>
-        <th rowspan="2">Lock-in period</th>
-    </tr>
-    <tr>
-        <th>rate (pa)</th>
-        <th>period</th>
-    </tr>
+    <thead>
+        <tr>
+            <th rowspan="2"></th>
+            <th rowspan="2">FLO ID</th>
+            <th rowspan="2">Date of bond start</th>
+            <th colspan="2">Amount invested</th>
+            <th colspan="2">Net Bond value</th>
+            <th rowspan="2">Base value (USD)</th>
+            <th rowspan="2">USD rate (INR)</th>
+            <th colspan="2">Guaranteed interest </th>
+            <th rowspan="2">Gain share</th>
+            <th rowspan="2">Lock-in period</th>
+        </tr>
+        <tr>
+            <th>(INR)</th>
+            <th>(USD)</th>
+            <th>(INR)</th>
+            <th>(USD)</th>
+            <th>rate (pa)</th>
+            <th>period</th>
+        </tr>
+    </thead>
+    <tbody id="bond-list-body"></tbody>
 </table>
 
 <script id="init_lib" version="1.0.1">
@@ -8060,25 +8067,13 @@ Bitcoin.Util = {
 <script>
     function onLoadStartUp() {
         compactIDB.initDB(floGlobals.application, {
-            bonds: {},
-            appendix: {}
-        }).then(result => {
-            getCurrentRates().then(rates => {
-                USD_current = rates.USD;
-                BTC_current = rates.BTC;
-                console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
-                document.getElementById("usd-rate").textContent = USD_current.toFixed(2);
-                document.getElementById("btc-rate").textContent = BTC_current.toFixed(2);
-                compactIDB.readAllData("bonds")
-                    .then(bonds => renderData(bonds))
-                    .catch(error => console.error(error))
-                refreshBtn.click();
-            }).catch(error => console.error(error))
-        }).catch(error => console.error(error))
+                bonds: {},
+                appendix: {}
+            }).then(result => refreshBtn.click())
+            .catch(error => console.error(error))
     }
 
     function renderData(data) {
-        console.info(data);
         let period = n => {
             let y = n,
                 m = n * 12,
@@ -8099,12 +8094,14 @@ Bitcoin.Util = {
             let b = parseDetails(data[i])
             b.netValue = calcNetValue(b.BTC_base, b.startDate, b.minIpa, b.maxPeriod, b.cut, b.amount, b.USD_base)
             console.info(b);
-            let row = document.getElementById("bond-list").insertRow(2);
+            let row = document.getElementById("bond-list-body").insertRow(0);
             row.insertCell().innerHTML = `<a href="https://livenet.flocha.in/tx/${i}" target="_blank">&#x1F855;<a>`
             row.insertCell().textContent = b.floID;
             row.insertCell().textContent = dateFormat(b.startDate);
-            row.insertCell().textContent = b.amount;
+            row.insertCell().textContent = b.amount.toFixed(2);
+            row.insertCell().textContent = (b.amount / b.USD_base).toFixed(2);
             row.insertCell().textContent = b.netValue.toFixed(2);
+            row.insertCell().textContent = (b.netValue.toFixed(2) / USD_current).toFixed(2);
             row.insertCell().textContent = b.BTC_base;
             row.insertCell().textContent = b.USD_base;
             row.insertCell().textContent = b.minIpa * 100 + '%';
@@ -8210,9 +8207,21 @@ Bitcoin.Util = {
 
     const refreshBtn = document.getElementById('refresh-btn');
     refreshBtn.addEventListener("click", evt => {
-        refreshBlockchainData()
-            .then(data => renderData(data))
-            .catch(error => console.error(error))
+        getCurrentRates().then(rates => {
+            USD_current = rates.USD_INR;
+            BTC_current = rates.BTC_USD;
+            console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
+            document.getElementById("usd-rate").textContent = rates.USD_INR.toFixed(2);
+            document.getElementById("btc-usd-rate").textContent = rates.BTC_USD.toFixed(2);
+            document.getElementById("btc-inr-rate").textContent = rates.BTC_INR.toFixed(2);
+            document.getElementById("bond-list-body").innerHTML = '';
+            compactIDB.readAllData("bonds")
+                .then(result => renderData(result))
+                .catch(error => console.error(error))
+            refreshBlockchainData()
+                .then(result => renderData(result))
+                .catch(error => console.error(error))
+        });
     });
 
     function refreshBlockchainData() {
@@ -8252,18 +8261,17 @@ Bitcoin.Util = {
             }).catch(error => reject(error))
         })
         return new Promise((resolve, reject) => {
-            let f0 = fetchData(`https://api.ratesapi.io/api/latest?base=USD&symbols=INR`), // USD rate
-                f1 = fetchData(`https://api.coindesk.com/v1/bpi/historical/close.json`); //BTC rate
-            Promise.all([f0, f1]).then(result => {
-                let USD = result[0]["rates"]["INR"],
-                    k = Object.keys(result[1]["bpi"]).sort().pop(),
-                    BTC = result[1]["bpi"][k];
+            fetchData(`https://bitpay.com/api/rates`).then(result => {
+                let BTC_USD, BTC_INR, USD_INR
+                for (let i of result)
+                    i.code == "USD" ? BTC_USD = i.rate : i.code == "INR" ? BTC_INR = i.rate : null;
+                USD_INR = BTC_INR / BTC_USD;
                 resolve({
-                    USD,
-                    BTC
-                });
+                    BTC_USD,
+                    BTC_INR,
+                    USD_INR
+                })
             }).catch(error => reject(error))
-
         })
     }
 
