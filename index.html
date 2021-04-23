@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Bond Client</title>
+    <title>Bitcoin Bonds on Blockchain</title>
     <script id="floGlobals">
         /* Constants for FLO blockchain operations !!Make sure to add this at begining!! */
         const floGlobals = {
@@ -32,6 +32,10 @@
 </head>
 <body onload="onLoadStartUp()">
 
+<h3>RanchiMall Bitcoin Bonds</h3>
+Current USD rate: <span id="usd-rate"></span> INR <br/>
+Current BTC rate: <span id="btc-rate"></span> USD <br/>
+<hr/>
 <form id="add-bond-form">
     FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br />
     Amount: <input type="text" name="amount" pattern="\d.+"><br />
@@ -46,16 +50,17 @@
         <option value="week(s)">week(s)</option>
         <option value="day(s)">day(s)</option>
     </select><br />
-    Alternate gain: <input type="number" name="cut" min=0 max=100>%<br />
-    Lockin period: <input type="number" name="lockin_v">
+    Gain share: <input type="number" name="cut" min=0 max=100>%<br />
+    Lock-in period: <input type="number" name="lockin_v">
     <select name="lockin_t">
         <option value="year(s)">year(s)</option>
         <option value="month(s)">month(s)</option>
         <option value="week(s)">week(s)</option>
         <option value="day(s)">day(s)</option>
     </select><br />
-    <input type="submit" /><input type="reset">
+    <input type="submit" value="Add Bond"/><input type="reset" value="Clear">
 </form>
+<hr/>
 <button id="refresh-btn">refresh</button>
 <table id="bond-list">
     <tr>
@@ -63,12 +68,12 @@
         <th rowspan="2">FLO ID</th>
         <th rowspan="2">Date of bond start</th>
         <th rowspan="2">Amount (INR)</th>
-        <th rowspan="2">Net Bond value</th>
+        <th rowspan="2">Net Bond value (INR)</th>
         <th rowspan="2">Base value (USD)</th>
         <th rowspan="2">USD rate (INR)</th>
         <th colspan="2">Guaranteed interest </th>
-        <th rowspan="2">Alternate gain</th>
-        <th rowspan="2">Lockin period</th>
+        <th rowspan="2">Gain share</th>
+        <th rowspan="2">Lock-in period</th>
     </tr>
     <tr>
         <th>rate (pa)</th>
@@ -8062,6 +8067,8 @@ Bitcoin.Util = {
                 USD_current = rates.USD;
                 BTC_current = rates.BTC;
                 console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
+                document.getElementById("usd-rate").textContent = USD_current.toFixed(2);
+                document.getElementById("btc-rate").textContent = BTC_current.toFixed(2);
                 compactIDB.readAllData("bonds")
                     .then(bonds => renderData(bonds))
                     .catch(error => console.error(error))
@@ -8097,7 +8104,7 @@ Bitcoin.Util = {
             row.insertCell().textContent = b.floID;
             row.insertCell().textContent = dateFormat(b.startDate);
             row.insertCell().textContent = b.amount;
-            row.insertCell().textContent = b.netValue;
+            row.insertCell().textContent = b.netValue.toFixed(2);
             row.insertCell().textContent = b.BTC_base;
             row.insertCell().textContent = b.USD_base;
             row.insertCell().textContent = b.minIpa * 100 + '%';
