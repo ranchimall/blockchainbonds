@@ -8104,7 +8104,7 @@ Bitcoin.Util = {
             row.insertCell().textContent = period(b.maxPeriod);
             row.insertCell().textContent = b.cut * 100 + '%';
             row.insertCell().textContent = period(b.lockinPeriod);
-            row.setAttribute("title", data[i].replaceAll("|", "\n"))
+            row.setAttribute("title", data[i].replace(/\|/g, "\n"))
         }
     }
 
@@ -8119,7 +8119,7 @@ Bitcoin.Util = {
         const parseNumber = (str) => {
             let n = 0,
                 g = 0;
-            str.toLowerCase().replaceAll(',', '').split(" ").forEach(s => {
+            str.toLowerCase().replace(/,/g, '').split(" ").forEach(s => {
                 if (s in magnitude) {
                     n += magnitude[s] * g;
                     g = 0;
@@ -8132,7 +8132,7 @@ Bitcoin.Util = {
         const parsePeriod = (str) => {
             let y = 0,
                 n;
-            str.toLowerCase().replaceAll(',', '').split(" ").forEach(s => {
+            str.toLowerCase().replace(/,/g, '').split(" ").forEach(s => {
                 if (!isNaN(s))
                     n = parseFloat(s);
                 else switch (s) {
@@ -8299,7 +8299,7 @@ Bitcoin.Util = {
         let f = evt.target;
 
         let bondStr = createBondString(f["base"].value, dateFormat(f["start_date"].value), f["gi_r"].value, f["gi_pv"].value + " " + f["gi_pt"].value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value + " " + f["lockin_t"].value, f["floid"].value);
-        if (!confirm(bondStr.replaceAll("|", "\n") + "\n\nDo you want to continue?"))
+        if (!confirm(bondStr.replace(/\|/g, "\n") + "\n\nDo you want to continue?"))
             return;
         let privKey = prompt(bondStr + `\n\nEnter Private key of adminID (${floGlobals.adminID})`);
         if (!privKey)
