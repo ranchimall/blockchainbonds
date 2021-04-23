@@ -40,8 +40,8 @@ Current USD rate: <span id="usd-rate"></span> INR <br />
     FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br />
     Amount: <input type="text" name="amount" pattern="\d.+"><br />
     Bond start date: <input type="date" name="start_date"><br />
-    Base (BTC) value: <input type="text" name="base" pattern="^[\d,]+.?\d$"><br />
-    USD rate: <input type="number" name="usd_rate" step="0.01">INR<br />
+    Base BTC value: <input type="text" name="base" pattern="^[\d,]+.?\d$"><br />
+    Base USD rate: <input type="number" name="usd_rate" step="0.01">INR<br />
     Guaranteed interest rate: <input type="number" name="gi_r" min=0 max=100 step="0.01">%<br />
     Guaranteed interest period: <input type="number" name="gi_pv">
     <select name="gi_pt">
@@ -70,11 +70,12 @@ Current USD rate: <span id="usd-rate"></span> INR <br />
             <th rowspan="2">Date of bond start</th>
             <th colspan="2">Amount invested</th>
             <th colspan="2">Net Bond value</th>
-            <th rowspan="2">Base value (USD)</th>
-            <th rowspan="2">USD rate (INR)</th>
+            <th rowspan="2">Base BTC value (USD)</th>
+            <th rowspan="2">Base USD rate (INR)</th>
             <th colspan="2">Guaranteed interest </th>
             <th rowspan="2">Gain share</th>
             <th rowspan="2">Lock-in period</th>
+            <th rowspan="2">Lock-in end date</th>
         </tr>
         <tr>
             <th>(INR)</th>
@@ -8108,6 +8109,7 @@ Bitcoin.Util = {
             row.insertCell().textContent = period(b.maxPeriod);
             row.insertCell().textContent = b.cut * 100 + '%';
             row.insertCell().textContent = period(b.lockinPeriod);
+            row.insertCell().textContent = dateFormat(new Date(b.startDate).getTime() + b.lockinPeriod * 3.154e+10)
             row.setAttribute("title", data[i].replace(/\|/g, "\n"))
         }
     }
