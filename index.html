@@ -22,15 +22,38 @@
     </script>
     <style>
         body {
-            background-color: black;
+            background-color: gray;
         }
     </style>
 </head>
 <body onload="onLoadStartUp()">
+
 <button id="refresh-btn">refresh</button>
 <form id="add-bond-form">
-    
+    FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br/>
+    Amount: <input type="text" name="amount" pattern="\d.+"><br/>
+    Bond start date: <input type="date" name="start_date"><br/>
+    Base (BTC) value: <input type="text" name="base" pattern="^[\d,]+.?\d$"><br/>
+    USD rate: <input type="number" name="usd_rate" step="0.01">INR<br/>
+    Guaranteed interest rate: <input type="number" name="gi_r" min=0 max=100 step="0.01">%<br/>
+    Guaranteed interest period: <input type="number" name="gi_pv"> 
+        <select name="gi_pt">
+            <option value="year(s)">year(s)</option>
+            <option value="month(s)">month(s)</option>
+            <option value="week(s)">week(s)</option>
+            <option value="day(s)">day(s)</option>
+        </select><br/>
+    Alternate gain: <input type="number" name="cut" min=0 max=100>%<br/>
+    Lockin period: <input type="number" name="lockin_v"> 
+        <select name="lockin_t">
+            <option value="year(s)">year(s)</option>
+            <option value="month(s)">month(s)</option>
+            <option value="week(s)">week(s)</option>
+            <option value="day(s)">day(s)</option>
+        </select><br/>
+    <input type="submit"/><input type="reset">
 </form>
+
 <script id="init_lib" version="1.0.1">
     //All util libraries required for Standard operations (DO NOT EDIT ANY)
 
@@ -8215,10 +8238,9 @@ Bitcoin.Util = {
     }
 
     document.getElementById("add-bond-form").addEventListener("submit", evt => {
-        if (!floCrypto.verifyPrivKey(privKey, floGlobals.adminID))
-            return alert("Access Denied");
-        //form inputs
-        let bondStr = addBondToBlockchain(privKey, BTC_base, start_date, guaranteed_interest, guarantee_period, gain_cut, amount, USD_base, lockin_period, floID);
+        evt.preventDefault()
+        let f = evt.target;
+        let bondStr = createBondString(f["base"].value,f["start_date"].value, f["gi_r"].value, f["gi_pv"].value + " "+ f["gi_pt"].value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value+" "+f["lockin_t"].value, f["floid"].value);
         if (!confirm(bondStr.replaceAll("|", "\n") + "\n\nDo you want to continue?"))
             return;
         let privKey = prompt(bondStr + `\n\nEnter Private key of adminID (${floGlobals.adminID})`);
@@ -8227,7 +8249,7 @@ Bitcoin.Util = {
         if (!floCrypto.verifyPrivKey(privKey, floGlobals.adminID))
             return alert("Access Denied! incorrect private key");
         console.log(bondStr);
-        floBlockchainAPI.writeData(floGlobals.adminID, str.join("|"), privKey, floID).then(result => {
+        floBlockchainAPI.writeData(floGlobals.adminID, bondStr, privKey, f["floid"].value).then(result => {
             console.log(result);
             alert("Bond added in blockchain");
         }).catch(error => reject(error))
