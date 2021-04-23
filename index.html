@@ -38,9 +38,9 @@ Current USD rate: <span id="usd-rate"></span> INR <br />
 <hr />
 <form id="add-bond-form">
     FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br />
-    Amount: <input type="text" name="amount" pattern="\d.+"><br />
+    Amount: <input type="text" name="amount" pattern="\d.+">INR<br />
     Bond start date: <input type="date" name="start_date"><br />
-    Base BTC value: <input type="text" name="base" pattern="^[\d,]+.?\d$"><br />
+    Base BTC value: <input type="text" name="base" pattern="^[\d,]+.?\d$">USD<br />
     Base USD rate: <input type="number" name="usd_rate" step="0.01">INR<br />
     Guaranteed interest rate: <input type="number" name="gi_r" min=0 max=100 step="0.01">%<br />
     Guaranteed interest period: <input type="number" name="gi_pv">
