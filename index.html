@@ -22,37 +22,59 @@
     </script>
     <style>
         body {
-            background-color: gray;
+            background-color: lightgrey;
+        }
+
+        #bond-list th, #bond-list td{
+            border: 1px solid black;
         }
     </style>
 </head>
 <body onload="onLoadStartUp()">
 
-<button id="refresh-btn">refresh</button>
 <form id="add-bond-form">
-    FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br/>
-    Amount: <input type="text" name="amount" pattern="\d.+"><br/>
-    Bond start date: <input type="date" name="start_date"><br/>
-    Base (BTC) value: <input type="text" name="base" pattern="^[\d,]+.?\d$"><br/>
-    USD rate: <input type="number" name="usd_rate" step="0.01">INR<br/>
-    Guaranteed interest rate: <input type="number" name="gi_r" min=0 max=100 step="0.01">%<br/>
-    Guaranteed interest period: <input type="number" name="gi_pv"> 
-        <select name="gi_pt">
-            <option value="year(s)">year(s)</option>
-            <option value="month(s)">month(s)</option>
-            <option value="week(s)">week(s)</option>
-            <option value="day(s)">day(s)</option>
-        </select><br/>
-    Alternate gain: <input type="number" name="cut" min=0 max=100>%<br/>
-    Lockin period: <input type="number" name="lockin_v"> 
-        <select name="lockin_t">
-            <option value="year(s)">year(s)</option>
-            <option value="month(s)">month(s)</option>
-            <option value="week(s)">week(s)</option>
-            <option value="day(s)">day(s)</option>
-        </select><br/>
-    <input type="submit"/><input type="reset">
+    FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br />
+    Amount: <input type="text" name="amount" pattern="\d.+"><br />
+    Bond start date: <input type="date" name="start_date"><br />
+    Base (BTC) value: <input type="text" name="base" pattern="^[\d,]+.?\d$"><br />
+    USD rate: <input type="number" name="usd_rate" step="0.01">INR<br />
+    Guaranteed interest rate: <input type="number" name="gi_r" min=0 max=100 step="0.01">%<br />
+    Guaranteed interest period: <input type="number" name="gi_pv">
+    <select name="gi_pt">
+        <option value="year(s)">year(s)</option>
+        <option value="month(s)">month(s)</option>
+        <option value="week(s)">week(s)</option>
+        <option value="day(s)">day(s)</option>
+    </select><br />
+    Alternate gain: <input type="number" name="cut" min=0 max=100>%<br />
+    Lockin period: <input type="number" name="lockin_v">
+    <select name="lockin_t">
+        <option value="year(s)">year(s)</option>
+        <option value="month(s)">month(s)</option>
+        <option value="week(s)">week(s)</option>
+        <option value="day(s)">day(s)</option>
+    </select><br />
+    <input type="submit" /><input type="reset">
 </form>
+<button id="refresh-btn">refresh</button>
+<table id="bond-list">
+    <tr>
+        <th rowspan="2"></th>
+        <th rowspan="2">FLO ID</th>
+        <th rowspan="2">Date of bond start</th>
+        <th rowspan="2">Amount (INR)</th>
+        <th rowspan="2">Net Bond value</th>
+        <th rowspan="2">Base value (USD)</th>
+        <th rowspan="2">USD rate (INR)</th>
+        <th colspan="2">Guaranteed interest </th>
+        <th rowspan="2">Alternate gain</th>
+        <th rowspan="2">Lockin period</th>
+    </tr>
+    <tr>
+        <th>rate (pa)</th>
+        <th>period</th>
+    </tr>
+</table>
 
 <script id="init_lib" version="1.0.1">
     //All util libraries required for Standard operations (DO NOT EDIT ANY)
@@ -8050,10 +8072,39 @@ Bitcoin.Util = {
 
     function renderData(data) {
         console.info(data);
+        let period = n => {
+            let y = n,
+                m = n * 12,
+                w = n * 52.1429,
+                d = n * 365;
+            if (y == Math.floor(y))
+                return y + " year(s)";
+            else if (m == Math.floor(m))
+                return m + " month(s)";
+            else if (w == Math.floor(w))
+                return w + " week(s)";
+            else if (d == Math.floor(d))
+                return d + " day(s)";
+            else
+                return n
+        }
         for (let i in data) {
             let b = parseDetails(data[i])
             b.netValue = calcNetValue(b.BTC_base, b.startDate, b.minIpa, b.maxPeriod, b.cut, b.amount, b.USD_base)
-            console.info(b)
+            console.info(b);
+            let row = document.getElementById("bond-list").insertRow(2);
+            row.insertCell().innerHTML = `<a href="https://livenet.flocha.in/tx/${i}" target="_blank">&#x1F855;<a>`
+            row.insertCell().textContent = b.floID;
+            row.insertCell().textContent = dateFormat(b.startDate);
+            row.insertCell().textContent = b.amount;
+            row.insertCell().textContent = b.netValue;
+            row.insertCell().textContent = b.BTC_base;
+            row.insertCell().textContent = b.USD_base;
+            row.insertCell().textContent = b.minIpa * 100 + '%';
+            row.insertCell().textContent = period(b.maxPeriod);
+            row.insertCell().textContent = b.cut * 100 + '%';
+            row.insertCell().textContent = period(b.lockinPeriod);
+            row.setAttribute("title", data[i].replaceAll("|", "\n"))
         }
     }
 
@@ -8178,6 +8229,12 @@ Bitcoin.Util = {
         })
     }
 
+    function dateFormat(date = null) {
+        let d = date ? new Date(date) : new Date();
+        d = d.toDateString();
+        return [d.substring(8, 10), d.substring(4, 7), d.substring(11, 15)].join(" ")
+    }
+
     function getCurrentRates() {
         let fetchData = api => new Promise((resolve, reject) => {
             fetch(api).then(response => {
@@ -8240,7 +8297,8 @@ Bitcoin.Util = {
     document.getElementById("add-bond-form").addEventListener("submit", evt => {
         evt.preventDefault()
         let f = evt.target;
-        let bondStr = createBondString(f["base"].value,f["start_date"].value, f["gi_r"].value, f["gi_pv"].value + " "+ f["gi_pt"].value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value+" "+f["lockin_t"].value, f["floid"].value);
+
+        let bondStr = createBondString(f["base"].value, dateFormat(f["start_date"].value), f["gi_r"].value, f["gi_pv"].value + " " + f["gi_pt"].value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value + " " + f["lockin_t"].value, f["floid"].value);
         if (!confirm(bondStr.replaceAll("|", "\n") + "\n\nDo you want to continue?"))
             return;
         let privKey = prompt(bondStr + `\n\nEnter Private key of adminID (${floGlobals.adminID})`);
