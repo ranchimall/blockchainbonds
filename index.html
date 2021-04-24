@@ -1,5 +1,9 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin Bonds on Blockchain</title>
     <script id="floGlobals">
         /* Constants for FLO blockchain operations !!Make sure to add this at begining!! */
@@ -20,23 +24,24 @@
             fee: 0.0005
         }
     </script>
-    <style>
-        body {
-            background-color: lightgrey;
-        }
-
-        #bond-list th, #bond-list td{
-            border: 1px solid black;
-        }
-    </style>
+    <link rel="stylesheet" href="css/main.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
 </head>
 <body onload="onLoadStartUp()">
+<header id="main_header">
+    <div class="grid">
+        <h5 class="weight-500 color-0-8">RanchiMall</h5>
+        <h4>Bitcoin Bonds</h4>
+    </div>
+    <div class="grid gap-1 flow-column justify-start align-center">
+        <span id="btc-usd-rate"></span>
+        <span id="btc-inr-rate"></span>
+        <span id="usd-rate"></span>
+    </div>
+</header>
 
-<h3>RanchiMall Bitcoin Bonds</h3>
-Current BTC rate: <span id="btc-usd-rate"></span> USD | <span id="btc-inr-rate"></span> INR<br />
-Current USD rate: <span id="usd-rate"></span> INR <br />
-<hr />
-<form id="add-bond-form">
+<form id="add-bond-form" class="hide-completely">
     FLO ID: <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}"><br />
     Amount: <input type="text" name="amount" pattern="\d.+">INR<br />
     Bond start date: <input type="date" name="start_date"><br />
@@ -60,34 +65,8 @@ Current USD rate: <span id="usd-rate"></span> INR <br />
     </select><br />
     <input type="submit" value="Add Bond" /><input type="reset" value="Clear">
 </form>
-<hr />
 <button id="refresh-btn">refresh</button>
-<table id="bond-list">
-    <thead>
-        <tr>
-            <th rowspan="2"></th>
-            <th rowspan="2">FLO ID</th>
-            <th rowspan="2">Date of bond start</th>
-            <th colspan="2">Amount invested</th>
-            <th colspan="2">Net Bond value</th>
-            <th rowspan="2">Base BTC value (USD)</th>
-            <th rowspan="2">Base USD rate (INR)</th>
-            <th colspan="2">Guaranteed interest </th>
-            <th rowspan="2">Gain share</th>
-            <th rowspan="2">Lock-in period</th>
-            <th rowspan="2">Lock-in end date</th>
-        </tr>
-        <tr>
-            <th>(INR)</th>
-            <th>(USD)</th>
-            <th>(INR)</th>
-            <th>(USD)</th>
-            <th>rate (pa)</th>
-            <th>period</th>
-        </tr>
-    </thead>
-    <tbody id="bond-list-body"></tbody>
-</table>
+<ul id="bond_list"></ul>
 
 <script id="init_lib" version="1.0.1">
     //All util libraries required for Standard operations (DO NOT EDIT ANY)
@@ -8065,6 +8044,207 @@ Bitcoin.Util = {
         }
     }
 </script>
+<script id="ui">
+    const bondTemplate = document.createElement('template')
+    bondTemplate.innerHTML = `
+    <style>
+        a:any-link,
+        button{
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: none;
+            cursor: pointer;
+            outline: none;
+            color: inherit;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-radius: 0.3rem;
+            padding: 0.4rem 0.6rem;
+            align-self: flex-start;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid rgba(var(--text-color), 0.8);
+        }
+        a:any-link:focus-visible,
+        button:focus-visible{
+            outline: rgba(var(--text-color), 1) 0.1rem solid;
+        }
+        .flex{
+            display: flex;
+        }
+        .grid{
+            display: grid;
+        }
+        .gap-1{
+            gap: 1rem;
+        }
+        .flow-column{
+            grid-auto-flow: column;
+        }
+        .hide-completely{
+            display: none !important;
+        }
+        .bond-transaction{
+            display: grid;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: rgba(var(--foreground-color), 1);
+            box-shadow: 0 1rem 2rem -1rem rgba($color: #000000, $alpha: 0.16);
+        }
+        .transaction-column{
+            display: flex;
+            flex-direction: column;
+        }
+        .label{
+            font-weight: 500;
+            font-size: 0.8rem;
+            margin-bottom: 0.2rem;
+            color: rgba(var(--text-color), 0.8);
+        }
+        .value{
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        @media only screen and (min-width: 640px) {
+            .bond-transaction{
+                grid-template-columns: 1fr auto;
+            }
+        }
+    </style>
+    <li class="bond-transaction">
+        <div class="transaction-column">
+            <span class="label">FLO ID</span>
+            <span class="value flo-id"></span>
+        </div>
+        <div class="transaction-column">
+            <span class="label">Bond starting date</span>
+            <span class="value bond-start-date"></span>
+        </div>
+        <div class="grid gap-1 flow-column justify-start">
+            <div class="transaction-column">
+                <span class="label">Amount intvested</span>
+                <span class="value amount-invested"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label">Net bond value</span>
+                <span class="value net-value"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label">Guaranteed interest</span>
+                <span class="value guaranteed-interest"></span>
+            </div>
+        </div>
+        <div class="grid gap-1 flow-column justify-start">
+            <a class="link" target="_blank">View on blockchain</a>
+            <button>More details</button>
+        </div>
+        <div class="more-details grid gap-1 flow-column justify-start hide-completely">
+            <div class="transaction-column">
+                <span class="label">Gain share</span>
+                <span class="value gain-share"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label">Lock-in period</span>
+                <span class="value lock-in-period"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label">Lock-in end date</span>
+                <span class="value bond-end-date"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label">Base BTC rate</span>
+                <span class="value base-btc-rate"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label">USD rate</span>
+                <span class="value usd-rate"></span>
+            </div>
+        </div>
+    </li>
+    `
+    customElements.define('bond-transaction', class extends HTMLElement {
+        constructor() {
+            super()
+            this.shadow = this.attachShadow({
+                mode: 'open'
+            })
+            this.shadow.append(bondTemplate.content.cloneNode(true))
+            this.amountInvestedInr
+            this.amountInvestedUsd
+            this.netValueInr
+            this.netValueUsd
+            this.moreDetailsButton = this.shadow.querySelector('button')
+            this.moreDetails = this.shadow.querySelector('.more-details')
+            this.areDetailsOpen = false
+        }
+        set data(obj){
+            const {
+                href,
+                floId,
+                bondStartDate,
+                amountInvestedInr,
+                amountInvestedUsd,
+                netValueInr,
+                netValueUsd,
+                guaranteedInterest,
+                guaranteedInterestDuration,
+                gainShare,
+                lockinPeriod,
+                lockinEnd,
+                baseBtcRate,
+                usdRate
+            } = obj
+
+            this.amountInvestedInr = amountInvestedInr
+            this.amountInvestedUsd = amountInvestedUsd
+            this.netValueInr = netValueInr
+            this.netValueUsd = netValueUsd
+
+            this.shadow.querySelector('.link').href = href
+            this.shadow.querySelector('.flo-id').textContent = floId
+            this.shadow.querySelector('.bond-start-date').textContent = bondStartDate
+            this.shadow.querySelector('.bond-end-date').textContent = lockinEnd
+            this.shadow.querySelector('.amount-invested').textContent = prefersInr ? `₹${this.amountInvestedInr}` : `$${this.amountInvestedUsd}`
+            this.shadow.querySelector('.net-value').textContent = prefersInr ? `₹${this.netValueInr}` : `$${this.netValueUsd}`
+            this.shadow.querySelector('.guaranteed-interest').textContent = `${guaranteedInterest} P.A for ${guaranteedInterestDuration}`
+            this.shadow.querySelector('.gain-share').textContent = gainShare
+            this.shadow.querySelector('.lock-in-period').textContent = lockinPeriod
+            this.shadow.querySelector('.base-btc-rate').textContent = `$${baseBtcRate}`
+            this.shadow.querySelector('.usd-rate').textContent = `₹${usdRate}`
+        }
+
+        toggleCurrency = () => {
+            this.shadow.querySelector('.amount-invested').textContent = prefersInr ? `₹${this.amountInvestedInr}` : `$${this.amountInvestedUsd}`
+            this.shadow.querySelector('.net-value').textContent = prefersInr ? `₹${this.netValueInr}` : `$${this.netValueUsd}`
+        }
+
+        toggleDetails = () => {
+            if(this.areDetailsOpen){
+                this.moreDetailsButton.textContent = 'More details'
+                this.moreDetails.classList.add('hide-completely')
+                this.areDetailsOpen = false
+            }
+            else{
+                this.moreDetailsButton.textContent = 'Less details'
+                this.moreDetails.classList.remove('hide-completely')
+                this.areDetailsOpen = true
+            }
+        }
+
+        connectedCallback(){
+            this.moreDetailsButton.addEventListener('click', this.toggleDetails)
+        }
+        
+        disconnectedCallback(){
+            this.moreDetailsButton.removeEventListener('click', this.toggleDetails)
+        }
+    })
+
+    let prefersInr = true
+
+</script>
 <script>
     function onLoadStartUp() {
         compactIDB.initDB(floGlobals.application, {
@@ -8081,37 +8261,48 @@ Bitcoin.Util = {
                 w = n * 52.1429,
                 d = n * 365;
             if (y == Math.floor(y))
-                return y + " year(s)";
+                return y + ` Year${y > 1 ? 's' : ''}`;
             else if (m == Math.floor(m))
-                return m + " month(s)";
+                return m + ` Month${m > 1 ? 's' : ''}`;
             else if (w == Math.floor(w))
-                return w + " week(s)";
+                return w + ` Week${w > 1 ? 's' : ''}`;
             else if (d == Math.floor(d))
-                return d + " day(s)";
+                return d + ` Day${d > 1 ? 's' : ''}`;
             else
                 return n
         }
+
+        const frag = document.createDocumentFragment()
+        
         for (let i in data) {
             let b = parseDetails(data[i])
             b.netValue = calcNetValue(b.BTC_base, b.startDate, b.minIpa, b.maxPeriod, b.cut, b.amount, b.USD_base)
             console.info(b);
-            let row = document.getElementById("bond-list-body").insertRow(0);
-            row.insertCell().innerHTML = `<a href="https://livenet.flocha.in/tx/${i}" target="_blank">&#x1F855;<a>`
-            row.insertCell().textContent = b.floID;
-            row.insertCell().textContent = dateFormat(b.startDate);
-            row.insertCell().textContent = b.amount.toFixed(2);
-            row.insertCell().textContent = (b.amount / b.USD_base).toFixed(2);
-            row.insertCell().textContent = b.netValue.toFixed(2);
-            row.insertCell().textContent = (b.netValue.toFixed(2) / USD_current).toFixed(2);
-            row.insertCell().textContent = b.BTC_base;
-            row.insertCell().textContent = b.USD_base;
-            row.insertCell().textContent = b.minIpa * 100 + '%';
-            row.insertCell().textContent = period(b.maxPeriod);
-            row.insertCell().textContent = b.cut * 100 + '%';
-            row.insertCell().textContent = period(b.lockinPeriod);
-            row.insertCell().textContent = dateFormat(new Date(b.startDate).getTime() + b.lockinPeriod * 3.154e+10)
-            row.setAttribute("title", data[i].replace(/\|/g, "\n"))
+            const obj = {
+                href: `https://livenet.flocha.in/tx/${i}`,
+                floId: b.floID,
+                bondStartDate: dateFormat(b.startDate),
+                amountInvestedInr: b.amount.toFixed(2),
+                amountInvestedUsd: (b.amount / b.USD_base).toFixed(2),
+                netValueInr: b.netValue.toFixed(2),
+                netValueUsd: (b.netValue.toFixed(2) / USD_current).toFixed(2),
+                guaranteedInterest: b.minIpa * 100 + '%',
+                guaranteedInterestDuration: period(b.maxPeriod),
+                gainShare: b.cut * 100 + '%',
+                lockinPeriod: period(b.lockinPeriod),
+                lockinEnd: dateFormat(new Date(b.startDate).getTime() + b.lockinPeriod * 3.154e+10),
+                baseBtcRate: b.BTC_base,
+                usdRate: b.USD_base
+            }
+
+            const bond = document.createElement('bond-transaction')
+            bond.data = obj
+            frag.append(bond)
+
+            // row.setAttribute("title", data[i].replace(/\|/g, "\n"))
         }
+
+        document.getElementById('bond_list').append(frag)
     }
 
     function parseDetails(data) {
@@ -8213,10 +8404,10 @@ Bitcoin.Util = {
             USD_current = rates.USD_INR;
             BTC_current = rates.BTC_USD;
             console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
-            document.getElementById("usd-rate").textContent = rates.USD_INR.toFixed(2);
-            document.getElementById("btc-usd-rate").textContent = rates.BTC_USD.toFixed(2);
-            document.getElementById("btc-inr-rate").textContent = rates.BTC_INR.toFixed(2);
-            document.getElementById("bond-list-body").innerHTML = '';
+            document.getElementById("usd-rate").textContent = `USD: ₹${rates.USD_INR.toFixed(2)}`;
+            document.getElementById("btc-usd-rate").textContent = `BTC: $${rates.BTC_USD.toFixed(2)}`;
+            document.getElementById("btc-inr-rate").textContent = `₹${rates.BTC_INR.toFixed(2)}`;
+            document.getElementById("bond_list").innerHTML = '';
             compactIDB.readAllData("bonds")
                 .then(result => renderData(result))
                 .catch(error => console.error(error))
