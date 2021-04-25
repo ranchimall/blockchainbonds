@@ -28,16 +28,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
 </head>
-<body onload="onLoadStartUp()">
+<body onload="onLoadStartUp()" data-theme="light">
 <header id="main_header">
-    <div class="grid">
-        <h5 class="weight-500 color-0-8">RanchiMall</h5>
-        <h4>Bitcoin Bonds</h4>
+    <div class="flex align-center">
+        <svg id="main_header__logo" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.46,21.32C20,19.78,18.6,18.59,15.3,17a12.67,12.67,0,0,1-2.64-1.56,4.27,4.27,0,0,1-.79-1,2.6,2.6,0,0,1,0-1.41c.24-.68.49-1,2.43-2.85a7.18,7.18,0,0,0,2.09-2.92,4.25,4.25,0,0,0,0-1.77,6.52,6.52,0,0,0-2.85-3.11c-.56-.36-.81-.4-.81-.15a2.33,2.33,0,0,1-.18.45L12.4,3l-.53-.36c-.28-.21-.64-.41-.77-.49s-.46-.11-.46,0a6.21,6.21,0,0,1-.37.83s-.08,0-.17-.08c-1.15-.83-1.64-1-1.64-.73A7.33,7.33,0,0,1,7.7,3.65C6.48,5.68,5.24,6.7,4,6.7c-.56,0-.54,0-.37.64s.2.58.68.43a3.37,3.37,0,0,0,1.09-.54.86.86,0,0,1,.3-.17,1.34,1.34,0,0,1,.13.39.79.79,0,0,0,.17.4A3.5,3.5,0,0,0,7.37,7.3L7.8,7l.09.34c.12.45.19.51.62.39a4.25,4.25,0,0,0,2.17-1.54l.38-.45,0,.39A5.92,5.92,0,0,1,8.89,9.54L7.67,10.71c-2,1.93-1.89,3.51.37,5a27.41,27.41,0,0,0,2.89,1.51c.17.07.62.32,1,.54C14,19,15,20.23,15,21.48a2,2,0,0,0,0,.49h0c0,.05,0,.05.56-.1a1.89,1.89,0,0,0,.53-.21,2.41,2.41,0,0,0-.34-1.15,7.05,7.05,0,0,0-1.68-1.77,21.91,21.91,0,0,0-3.2-1.83A9.53,9.53,0,0,1,8.16,15.2a2.18,2.18,0,0,1-.74-1.55C7.42,12.79,7.86,12,9,11c1.77-1.64,2.45-2.45,2.92-3.55a2.28,2.28,0,0,0,.26-1.26A2,2,0,0,0,12,5.06l-.2-.45L12,4.3l.28-.49.09-.18L12.6,4a3.69,3.69,0,0,1,.61,1.76A3.47,3.47,0,0,1,12.94,7l-.09.25s-.21.37-.41.69A17.78,17.78,0,0,1,9.91,10.6c-1.07,1-1.43,1.62-1.47,2.47a2.05,2.05,0,0,0,.7,1.73,10.47,10.47,0,0,0,3.28,2.08c2.28,1.13,3.26,1.81,4,2.73a2.94,2.94,0,0,1,.74,1.75,1.26,1.26,0,0,0,.09.57.48.48,0,0,0,.26,0l.51-.13.29-.08,0-.28c-.13-1-1-2-2.47-3a25.52,25.52,0,0,0-3.26-1.77,8.59,8.59,0,0,1-2.23-1.43,2.09,2.09,0,0,1-.5-2.62c.26-.53.5-.83,2.35-2.6,1.51-1.45,2.15-2.58,2.15-3.79A3.67,3.67,0,0,0,13,3.48a3,3,0,0,1-.4-.42A1.85,1.85,0,0,1,13,2.33a6.74,6.74,0,0,1,1.83,1.73,2.62,2.62,0,0,1,.47,1.68,3,3,0,0,1-.55,1.84c-.45.78-.79,1.14-2.67,2.93a5.56,5.56,0,0,0-1.3,1.64,1.77,1.77,0,0,0-.21,1,1.76,1.76,0,0,0,.19.92,6.28,6.28,0,0,0,2.9,2.34,21.6,21.6,0,0,1,3.66,2c1.35,1,2,2,2,3a1.06,1.06,0,0,0,.05.47,2.83,2.83,0,0,0,1-.24C20.56,21.68,20.56,21.66,20.46,21.32ZM7.29,6.4h0a2.23,2.23,0,0,1-.9.28L6,6.72l.43-.53a15.22,15.22,0,0,0,1.89-3,3.52,3.52,0,0,1,.38-.67c.07-.08.49.2,1,.64l.39.35L9.66,4A6.7,6.7,0,0,1,7.29,6.4Zm3.58-1.11A5.8,5.8,0,0,1,9.25,6.51h0a3.3,3.3,0,0,1-.74.17l-.35,0,.39-.49a15.64,15.64,0,0,0,1.32-2,4.63,4.63,0,0,1,.28-.49c.06-.08.33.26.57.77l.28.57Zm1-1.4a1.63,1.63,0,0,1-.28.4A6.63,6.63,0,0,1,11,3.72l-.53-.56.12-.29c.2-.49.24-.51.64-.19a5.57,5.57,0,0,1,.85.78A2.78,2.78,0,0,1,11.87,3.89Z"/></svg>
+        <div class="grid">
+            <h5 class="header__company-name">RanchiMall</h5>
+            <h3 class="h3">Bitcoin Bonds</h3>
+        </div>
     </div>
     <div class="grid gap-1 flow-column justify-start align-center">
-        <span id="btc-usd-rate"></span>
-        <span id="btc-inr-rate"></span>
-        <span id="usd-rate"></span>
+        <span id="btc-usd-rate" class="weight-700"></span>
+        <span id="btc-inr-rate" class="weight-700"></span>
+        <span id="usd-rate" class="weight-700"></span>
+    </div>
+    <div class="grid justify-start">
+        <h5 class="h5 margin-bottom-0-5r">Preferred currency</h5>
+        <sm-select id="currency_selector" align-select="right" class="justify-self-end">
+            <sm-option value="inr">INR</sm-option>
+            <sm-option value="usd">USD</sm-option>
+        </sm-select>
     </div>
 </header>
 
@@ -65,8 +75,13 @@
     </select><br />
     <input type="submit" value="Add Bond" /><input type="reset" value="Clear">
 </form>
-<button id="refresh-btn">refresh</button>
-<ul id="bond_list"></ul>
+<main class="page">
+    <header class="bond-list__header flex align-center">
+        <h4 class="h4">Recent</h4>
+        <button id="refresh-btn" class="justify-right">Refresh</button>
+    </header>
+    <ul id="bond_list"></ul>
+</main>
 
 <script id="init_lib" version="1.0.1">
     //All util libraries required for Standard operations (DO NOT EDIT ANY)
@@ -8085,13 +8100,18 @@ Bitcoin.Util = {
         .hide-completely{
             display: none !important;
         }
+        .flex-grid{
+            display: grid;
+            gap: 1rem;
+            justify-content: start;
+            grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+        }
         .bond-transaction{
             display: grid;
             gap: 1rem;
             padding: 1rem;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
             background-color: rgba(var(--foreground-color), 1);
-            box-shadow: 0 1rem 2rem -1rem rgba($color: #000000, $alpha: 0.16);
         }
         .transaction-column{
             display: flex;
@@ -8106,6 +8126,14 @@ Bitcoin.Util = {
         .value{
             font-weight: 700;
             font-size: 1rem;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            -ms-word-break: break-all;
+            word-break: break-word;
+            -ms-hyphens: auto;
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
         }
         @media only screen and (min-width: 640px) {
             .bond-transaction{
@@ -8122,14 +8150,14 @@ Bitcoin.Util = {
             <span class="label">Bond starting date</span>
             <span class="value bond-start-date"></span>
         </div>
-        <div class="grid gap-1 flow-column justify-start">
+        <div class="flex-grid">
             <div class="transaction-column">
                 <span class="label">Amount intvested</span>
                 <span class="value amount-invested"></span>
             </div>
             <div class="transaction-column">
                 <span class="label">Net bond value</span>
-                <span class="value net-value"></span>
+                <span class="value net-value" style="color: var(--green)"></span>
             </div>
             <div class="transaction-column">
                 <span class="label">Guaranteed interest</span>
@@ -8140,7 +8168,7 @@ Bitcoin.Util = {
             <a class="link" target="_blank">View on blockchain</a>
             <button>More details</button>
         </div>
-        <div class="more-details grid gap-1 flow-column justify-start hide-completely">
+        <div class="more-details flex-grid hide-completely">
             <div class="transaction-column">
                 <span class="label">Gain share</span>
                 <span class="value gain-share"></span>
@@ -8242,7 +8270,389 @@ Bitcoin.Util = {
         }
     })
 
+    const smSelect = document.createElement('template')
+    smSelect.innerHTML = `
+    <style>     
+    *{
+        padding: 0;
+        margin: 0;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+    } 
+    :host{
+        display: -webkit-inline-box;
+        display: -ms-inline-flexbox;
+        display: inline-flex;
+        --max-height: auto;
+        --border: solid 1px rgba(var(--text-color), 0.2);
+        --arrow-fill: rgba(var(--text-color), 0.7);
+        --selection-font-size: inherit;
+    }
+    .icon {
+        height: 1.4rem;
+        width: 1.4rem;
+        margin-left: 0.5rem;
+        fill: var(--arrow-fill);
+    }      
+    .hide{
+        opacity: 0;
+        pointer-events: none;
+    }
+    .select{
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        cursor: pointer;
+        width: 100%;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .option-text{
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 700;
+        font-size: var(--selection-font-size);
+    }
+    .selection{
+        border-radius: 0.3rem;
+        display: -ms-grid;
+        display: grid;
+        -ms-grid-columns: 1fr auto;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: 'heading heading' '. .';
+        padding: 0.4rem 1rem;
+        background: rgba(var(--text-color), 0.06);
+        border: var(--border);
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        outline: none;
+    }
+    .selection:focus-visible{
+        -webkit-box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 1);
+                box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 1); 
+    }
+    :host([align-select="left"]) .options{
+        left: 0;
+    }
+    :host([align-select="right"]) .options{
+        right: 0;
+    }
+    .options{
+        top: 100%;
+        margin-top: 0.5rem; 
+        overflow: hidden auto;
+        position: absolute;
+        grid-area: options;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        min-width: 100%;
+        max-height: var(--max-height);
+        background: rgba(var(--foreground-color), 1);
+        -webkit-transition: opacity 0.3s, top 0.3s;
+        -o-transition: opacity 0.3s, top 0.3s;
+        transition: opacity 0.3s, top 0.3s;
+        border: solid 1px rgba(var(--text-color), 0.2);
+        border-radius: 0.3rem;
+        z-index: 2;
+        -webkit-box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
+                box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
+    }
+    .rotate{
+        -webkit-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+                transform: rotate(180deg)
+    }
+    </style>
+    <div class="select" >
+        <div class="selection" tabindex="0">
+            <div class="option-text"></div>
+            <svg class="icon toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
+        </div>
+        <div part="options" aria-hidden="true" class="options hide">
+            <slot></slot> 
+        </div>
+    </div>`;
+    customElements.define('sm-select', class extends HTMLElement {
+        constructor() {
+            super()
+            this.attachShadow({
+                mode: 'open'
+            }).append(smSelect.content.cloneNode(true))
+            this.availableOptions
+            this.optionList = this.shadowRoot.querySelector('.options')
+            this.chevron = this.shadowRoot.querySelector('.toggle')
+            this.optionText = this.shadowRoot.querySelector('.option-text')
+        }
+        static get observedAttributes() {
+            return ['value']
+        }
+        get value() {
+            return this.getAttribute('value')
+        }
+        set value(val) {
+            this.setAttribute('value', val)
+            this.optionText.textContent = val;
+        }
+
+        open = () => {
+            this.optionList.classList.remove('hide')
+            this.optionList.animate(this.slideDown, this.animationOptions)
+            this.availableOptions.forEach((element, index) => {
+                element.setAttribute('tabindex', "0");
+            })
+            this.chevron.classList.add('rotate')
+            this.isOpen = true
+        }
+
+        collapse = () => {
+            this.optionList.animate(this.slideUp, this.animationOptions)
+            this.optionList.setAttribute('aria-hidden', 'true')
+            this.availableOptions.forEach((element, index) => {
+                element.setAttribute('tabindex', "-1");
+            })
+            this.optionList.classList.add('hide')
+            this.chevron.classList.remove('rotate')
+            this.isOpen = false
+        }
+        connectedCallback() {
+            let slot = this.shadowRoot.querySelector('.options slot'),
+                selection = this.shadowRoot.querySelector('.selection'),
+                previousOption
+            this.isOpen = false;
+            this.slideDown = [{
+                        transform: `translateY(-0.5rem)`
+                    },
+                    {
+                        transform: `translateY(0)`
+                    }
+                ],
+                this.slideUp = [{
+                        transform: `translateY(0)`
+                    },
+                    {
+                        transform: `translateY(-0.5rem)`
+                    }
+                ],
+                this.animationOptions = {
+                    duration: 300,
+                    fill: "forwards",
+                    easing: 'ease'
+                }
+            selection.addEventListener('click', e => {
+                if (!this.isOpen) {
+                    this.open()
+                } else {
+                    this.collapse()
+                }
+            })
+            selection.addEventListener('keydown', e => {
+                if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
+                    e.preventDefault()
+                    this.availableOptions[0].focus()
+                }
+                if (e.code === 'Enter' || e.code === 'Space')
+                    if (!this.isOpen) {
+                        this.open()
+                    } else {
+                        this.collapse()
+                    }
+            })
+            this.optionList.addEventListener('keydown', e => {
+                if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
+                    e.preventDefault()
+                    if (document.activeElement.previousElementSibling) {
+                        document.activeElement.previousElementSibling.focus()
+                    }
+                }
+                if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
+                    e.preventDefault()
+                    if (document.activeElement.nextElementSibling)
+                        document.activeElement.nextElementSibling.focus()
+                }
+            })
+            this.addEventListener('optionSelected', e => {
+                if (previousOption !== e.target) {
+                    this.setAttribute('value', e.detail.value)
+                    this.optionText.textContent = e.detail.text;
+                    this.dispatchEvent(new CustomEvent('change', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {
+                            value: e.detail.value
+                        }
+                    }))
+                    if (previousOption) {
+                        previousOption.classList.remove('check-selected')
+                    }
+                    previousOption = e.target;
+                }
+                if (!e.detail.switching)
+                    this.collapse()
+
+                e.target.classList.add('check-selected')
+            })
+            slot.addEventListener('slotchange', e => {
+                this.availableOptions = slot.assignedElements()
+                if (this.availableOptions[0]) {
+                    this.availableOptions.forEach(option => {
+                        if(option.hasAttribute('selected')){
+                            this.optionText.textContent = option.textContent
+                            option.classList.add('check-selected')
+                            previousOption = option
+                        }
+                    })
+                }
+            });
+            document.addEventListener('mousedown', e => {
+                if (!this.contains(e.target) && this.isOpen) {
+                    this.collapse()
+                }
+            })
+        }
+    })
+
+    // option
+    const smOption = document.createElement('template')
+    smOption.innerHTML = `
+    <style>     
+    *{
+        padding: 0;
+        margin: 0;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+    }     
+    :host{
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        --color: inherit;
+    }
+    .option{
+        min-width: 100%;
+        padding: 0.8rem 1.2rem;
+        cursor: pointer;
+        overflow-wrap: break-word;
+        outline: none;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        color: var(--color);
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+    }
+    :host(:focus){
+        outline: none;
+        background: rgba(var(--text-color), 0.1);
+    }
+    :host(:focus) .option .icon{
+        opacity: 0.4
+    }
+    :host(.check-selected) .icon{
+        opacity: 1 !important
+    }
+    .icon {
+        margin-right: 0.8rem;
+        fill: none;
+        height: 0.8rem;
+        width: 0.8rem;
+        stroke: rgba(var(--text-color), 0.7);
+        stroke-width: 10;
+        overflow: visible;
+        stroke-linecap: round;
+        border-radius: 1rem;
+        stroke-linejoin: round;
+        opacity: 0;
+    }
+    @media (hover: hover){
+        .option:hover{
+            background: rgba(var(--text-color), 0.1);
+        }
+        .option:hover .icon{
+            opacity: 0.4
+        }
+    }
+    </style>
+    <div class="option">
+        <svg class="icon" viewBox="0 0 64 64">
+            <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
+        </svg>
+        <slot></slot> 
+    </div>`;
+    customElements.define('sm-option', class extends HTMLElement {
+        constructor() {
+            super()
+            this.attachShadow({
+                mode: 'open'
+            }).append(smOption.content.cloneNode(true))
+        }
+
+        sendDetails(switching) {
+            let optionSelected = new CustomEvent('optionSelected', {
+                bubbles: true,
+                composed: true,
+                detail: {
+                    text: this.textContent,
+                    value: this.getAttribute('value'),
+                    switching: switching
+                }
+            })
+            this.dispatchEvent(optionSelected)
+        }
+
+        connectedCallback() {
+            let validKey = [
+                'ArrowUp',
+                'ArrowDown',
+                'ArrowLeft',
+                'ArrowRight'
+            ]
+            this.addEventListener('click', e => {
+                this.sendDetails()
+            })
+            this.addEventListener('keyup', e => {
+                if (e.code === 'Enter' || e.code === 'Space') {
+                    e.preventDefault()
+                    this.sendDetails(false)
+                }
+                if (validKey.includes(e.code)) {
+                    e.preventDefault()
+                    this.sendDetails(true)
+                }
+            })
+        }
+    })
+    
     let prefersInr = true
+    if(localStorage.getItem('preferred-currency')){
+        if(localStorage.getItem('preferred-currency') === 'inr')
+        {
+            prefersInr = true
+        }
+        else{
+            prefersInr = false
+        }
+        document.querySelector(`sm-option[value="${localStorage.getItem('preferred-currency')}"]`).setAttribute('selected', '')
+    }
+
+
+    document.getElementById('currency_selector').addEventListener('change', e => {
+        prefersInr = e.detail.value === 'inr' ? true : false
+        localStorage.setItem('preferred-currency', e.detail.value)
+        document.querySelectorAll('bond-transaction').forEach(bond => bond.toggleCurrency())
+    })
 
 </script>
 <script>
@@ -8297,9 +8707,9 @@ Bitcoin.Util = {
 
             const bond = document.createElement('bond-transaction')
             bond.data = obj
+            bond.setAttribute("title", data[i].replace(/\|/g, "\n"))
             frag.append(bond)
 
-            // row.setAttribute("title", data[i].replace(/\|/g, "\n"))
         }
 
         document.getElementById('bond_list').append(frag)
