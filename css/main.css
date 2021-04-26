@@ -64,8 +64,10 @@ body[data-theme=dark] {
 }
 
 p {
+  font-size: 0.8;
   max-width: 60ch;
-  line-height: 1.7;
+  line-height: 1.5;
+  color: rgba(var(--text-color), 0.8);
 }
 
 img {
@@ -83,6 +85,7 @@ a:focus-visible {
 button {
   position: relative;
   display: inline-flex;
+  overflow: hidden;
   align-items: center;
   background: none;
   cursor: pointer;
@@ -360,13 +363,18 @@ ul {
 
 #main_header__logo {
   fill: white;
-  height: 2.6rem;
-  width: 2.6rem;
-  margin-left: -0.5rem;
+  height: 2.4rem;
+  width: 2.4rem;
+  margin-left: -0.3rem;
 }
 
 .header__company-name {
   font-weight: 500;
+}
+
+.header__app-name {
+  font-weight: 700;
+  font-size: 1.2rem;
 }
 
 #usd-rate {
@@ -382,13 +390,56 @@ ul {
 }
 
 sm-select {
+  min-width: 6rem;
   --selection-font-size: 0.9rem;
-  --arrow-fill: white;
-  --border: 1px solid white;
 }
 
 sm-option {
   --color: rgba(var(--text-color), 1);
+}
+
+.dropdown {
+  display: flex;
+  justify-content: flex-end;
+  z-index: 5;
+}
+
+.dropdown__panel {
+  position: absolute;
+  display: grid;
+  gap: 2rem;
+  left: 0;
+  right: 0;
+  top: 100%;
+  padding: 1rem;
+  margin: 0 1rem;
+  margin-top: 0.5rem;
+  border-radius: 0.3rem;
+  grid-template-columns: 1fr;
+  justify-content: flex-start;
+  color: rgba(var(--text-color), 1);
+  width: min(24rem, calc(100vw - 2rem));
+  background-color: rgba(var(--foreground-color), 1);
+  box-shadow: 0 2rem 2rem -0.5rem rgba(0, 0, 0, 0.16);
+}
+
+#profile_button {
+  border: none;
+  height: 2.4rem;
+  width: 2.4rem;
+  justify-self: flex-end;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.16);
+}
+#profile_button .icon {
+  height: 1.2rem;
+  width: 1.2rem;
+  fill: white;
+}
+
+#theme_switcher {
+  overflow: hidden;
+  width: 100%;
 }
 
 .page {
@@ -414,10 +465,18 @@ bond-transaction {
   box-shadow: 0 1rem 2rem -1rem rgba(0, 0, 0, 0.16);
 }
 
+@media only screen and (max-width: 640px) {
+  #main_header {
+    grid-template-areas: ". profile-button";
+  }
+  #main_header .dropdown {
+    grid-area: profile-button;
+  }
+}
 @media only screen and (min-width: 640px) {
   #main_header {
     padding: 2rem calc((10vw / 2) - 0.4rem);
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 1fr auto auto;
   }
   #main_header::after {
     height: 5rem;
@@ -425,6 +484,10 @@ bond-transaction {
 
   .page {
     grid-template-columns: 1fr 90vw 1fr;
+  }
+
+  .dropdown__panel {
+    left: auto;
   }
 }
 @media only screen and (min-width: 1280px) {
