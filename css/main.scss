@@ -27,6 +27,9 @@ body[data-theme='dark']{
     --foreground-color: 20, 20, 20;
     --background-color: #0a0a0a;
     --error-color: rgb(255, 106, 106);
+    ::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
 }
 
 .full-bleed{
@@ -394,6 +397,20 @@ sm-option{
 
 bond-transaction{
     box-shadow: 0 1rem 2rem -1rem rgba($color: #000000, $alpha: 0.16);
+}
+
+form{
+    padding: 1rem;
+    border-radius: 0.3rem;
+    width: min(32rem, 100%);
+    margin-bottom: 3rem;
+    background: rgba(var(--foreground-color), 1);
+    input{
+        color: inherit;
+        padding: 0.4rem 0.6rem;
+        background-color: rgba(var(--text-color), 0.1);
+        box-shadow: 0 0 0 1px rgba(var(--text-color), 0.6);
+    }
 }
 
 
