@@ -38,7 +38,7 @@
                 <h3 class="header__app-name">Bitcoin Bonds</h3>
             </div>
         </div>
-        <div class="grid gap-1 flow-column justify-start align-center">
+        <div id="current_price" class="grid gap-1 flow-column align-center">
             <span id="btc-usd-rate" class="weight-700 hide-completely"></span>
             <span id="btc-inr-rate" class="weight-700"></span>
             <span id="usd-rate" class="weight-700"></span>
@@ -61,19 +61,36 @@
                         <div slot="left" class="flex weight-700">Dark theme</div>
                     </sm-switch>
                 </li>
+                <li class="interact weight-700" onclick="showPage('add_bond_page')">
+                    Add Bond (Admin only!)
+                </li>
             </ul>
         </div>
     </header>
 
-    <main class="page">
-        <header class="bond-list__header flex align-center">
+    <main id="home_page" class="page page-layout">
+        <section id="homepage__hero-section" class="full-bleed page-layout">
+            <h2 class="h2 weight-700 margin-bottom-1r">Bitcoin Bonds <br>on FLO Blockchain</h2>
+            <p>Bondholders get a minimum guarantee of typically 13% interest per annum during the lock-in period or typically 50% of all Bitcoin price gains whichever is higher. <br> <strong> It offers full capital protection if Bitcoin prices fall below acquisition price.</strong></p>
+        </section>
+        <header class="bond-list__header grid">
             <h4 class="h4">Recent</h4>
-            <button id="refresh-btn" class="justify-right">Refresh</button>
+            <sm-input id="search_bonds" type="search" placeholder="Search bonds with FLO ID">
+                <svg slot="icon" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z"/></svg>
+            </sm-input>
+            <button id="refresh-btn" class="justify-right button--primary">Refresh</button>
         </header>
         <ul id="bond_list"></ul>
+        <div id="bond_list__empty-state" class="grid hide-completely">
+            <svg class="icon icon--big" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-4-6h8v2H8v-2zm0-3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm8 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+            <h4>No bonds found</h4>
+        </div>
     </main>
-    <article class="page hide-completely">
-        <header class="margin-bottom-1-5r">
+    <article id="add_bond_page" class="page page-layout hide-completely">
+        <header class="flex margin-top-1-5 align-center margin-bottom-1-5r">
+            <button onclick="showPage('home_page')">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z"/></svg>
+            </button>
             <h3>Admin Panel</h3>
         </header>
         <form id="add-bond-form" class="grid gap-1-5">
@@ -105,12 +122,12 @@
                 Guaranteed interest period
                 <div class="flex">
                     <input type="number" name="gi_pv">
-                    <select name="gi_pt">
-                        <option value="year(s)">year(s)</option>
-                        <option value="month(s)">month(s)</option>
-                        <option value="week(s)">week(s)</option>
-                        <option value="day(s)">day(s)</option>
-                    </select>
+                    <sm-select id="gi_pt" align-select="right">
+                        <sm-option value="year(s)" selected>year(s)</sm-option>
+                        <sm-option value="month(s)">month(s)</sm-option>
+                        <sm-option value="week(s)">week(s)</sm-option>
+                        <sm-option value="day(s)">day(s)</sm-option>
+                    </sm-select>
                 </div>
             </label>
             <label class="grid gap-0-5">
@@ -121,16 +138,16 @@
                 Lock-in period
                 <div class="flex">
                     <input type="number" name="lockin_v">
-                    <select name="lockin_t">
-                        <option value="year(s)">year(s)</option>
-                        <option value="month(s)">month(s)</option>
-                        <option value="week(s)">week(s)</option>
-                        <option value="day(s)">day(s)</option>
-                    </select>
+                    <sm-select id="lockin_t" align-select="right">
+                        <sm-option value="year(s)" selected>year(s)</sm-option>
+                        <sm-option value="month(s)">month(s)</sm-option>
+                        <sm-option value="week(s)">week(s)</sm-option>
+                        <sm-option value="day(s)">day(s)</sm-option>
+                    </sm-select>
                 </div>
             </label>
             <div class="grid flow-column align-center gap-1 justify-start">
-                <button type="submit">Add Bond</button>
+                <button type="submit" class="button--primary">Add Bond</button>
                 <button type="reset">Clear</button>
             </div>
         </form>
@@ -7036,7 +7053,6 @@ Bitcoin.Util = {
     }
 })();
 </script>
-
 <script id="floCrypto" version="2.0.1">
     /* FLO Crypto Operators*/
     const floCrypto = {
@@ -8258,10 +8274,8 @@ Bitcoin.Util = {
                 mode: 'open'
             })
             this.shadow.append(bondTemplate.content.cloneNode(true))
-            this.amountInvestedInr
-            this.amountInvestedUsd
-            this.netValueInr
-            this.netValueUsd
+            this.amountInvested
+            this.netValue
             this.moreDetailsButton = this.shadow.querySelector('button')
             this.moreDetails = this.shadow.querySelector('.more-details')
             this.areDetailsOpen = false
@@ -8271,10 +8285,8 @@ Bitcoin.Util = {
                 href,
                 floId,
                 bondStartDate,
-                amountInvestedInr,
-                amountInvestedUsd,
-                netValueInr,
-                netValueUsd,
+                amountInvested,
+                netValue,
                 guaranteedInterest,
                 guaranteedInterestDuration,
                 gainShare,
@@ -8284,17 +8296,16 @@ Bitcoin.Util = {
                 usdRate
             } = obj
 
-            this.amountInvestedInr = amountInvestedInr
-            this.amountInvestedUsd = amountInvestedUsd
-            this.netValueInr = netValueInr
-            this.netValueUsd = netValueUsd
+            this.amountInvested = amountInvested
+            this.netValue = netValue
 
+            this.dataset.floId = floId
             this.shadow.querySelector('.link').href = href
             this.shadow.querySelector('.flo-id').textContent = floId
             this.shadow.querySelector('.bond-start-date').textContent = bondStartDate
             this.shadow.querySelector('.bond-end-date').textContent = lockinEnd
-            this.shadow.querySelector('.amount-invested').textContent = prefersInr ? `₹${this.amountInvestedInr}` : `$${this.amountInvestedUsd}`
-            this.shadow.querySelector('.net-value').textContent = prefersInr ? `₹${this.netValueInr}` : `$${this.netValueUsd}`
+            this.shadow.querySelector('.amount-invested').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
+            this.shadow.querySelector('.net-value').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
             this.shadow.querySelector('.guaranteed-interest').textContent = `${guaranteedInterest} P.A for ${guaranteedInterestDuration}`
             this.shadow.querySelector('.gain-share').textContent = gainShare
             this.shadow.querySelector('.lock-in-period').textContent = lockinPeriod
@@ -8303,8 +8314,8 @@ Bitcoin.Util = {
         }
 
         toggleCurrency = () => {
-            this.shadow.querySelector('.amount-invested').textContent = prefersInr ? `₹${this.amountInvestedInr}` : `$${this.amountInvestedUsd}`
-            this.shadow.querySelector('.net-value').textContent = prefersInr ? `₹${this.netValueInr}` : `$${this.netValueUsd}`
+            this.shadow.querySelector('.amount-invested').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
+            this.shadow.querySelector('.net-value').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
         }
 
         toggleDetails = () => {
@@ -8328,6 +8339,413 @@ Bitcoin.Util = {
             this.moreDetailsButton.removeEventListener('click', this.toggleDetails)
         }
     })
+
+    //Input
+    const smInput = document.createElement('template')
+    smInput.innerHTML = `
+    <style>
+    *{
+        padding: 0;
+        margin: 0;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+    } 
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-results-button,
+    input[type="search"]::-webkit-search-results-decoration { display: none; }
+    input[type=number] {
+    -moz-appearance:textfield;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0; 
+    }
+    input::-ms-reveal,
+    input::-ms-clear {
+    display: none;
+    }
+    input:invalid{
+        outline: none;
+        -webkit-box-shadow: none;
+                box-shadow: none;
+    }
+    ::-moz-focus-inner{
+    border: none;
+    }
+    :host{
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        --font-size: 1rem;
+        --border-radius: 0.3rem;
+        --padding: 0.7rem 1rem;
+        --background: rgba(var(--text-color), 0.06);
+    }
+    .hide{
+    opacity: 0 !important;
+    pointer-events: none !important;
+    }
+    .hide-completely{
+        display: none;
+    }
+    .icon {
+        fill: rgba(var(--text-color), 0.6);
+        height: 1.4rem;
+        width: 1.4rem;
+        border-radius: 1rem;
+        cursor: pointer;
+        min-width: 0;
+    }
+
+    :host(.round) .input{
+        border-radius: 10rem;
+    }
+    .input {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        cursor: text;
+        min-width: 0;
+        text-align: left;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        position: relative;
+        gap: 0.5rem;
+        padding: var(--padding);
+        border-radius: var(--border-radius);
+        -webkit-transition: opacity 0.3s;
+        -o-transition: opacity 0.3s;
+        transition: opacity 0.3s;
+        background: var(--background);
+        width: 100%;
+        outline: none;
+    }
+    .input.readonly .clear{
+        opacity: 0 !important;
+        margin-right: -2rem;
+        pointer-events: none !important;
+    }
+    .readonly{
+        pointer-events: none;
+    }
+    .input:focus-within:not(.readonly){
+        box-shadow: 0 0 0 0.1rem var(--accent-color) inset !important;
+    }
+    .disabled{
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    .label {
+        opacity: .7;
+        font-size: var(--font-size);
+        font-weight: var(--font-weight);
+        position: absolute;
+        top: 0;
+        -webkit-transition: -webkit-transform 0.3s;
+        transition: -webkit-transform 0.3s;
+        -o-transition: transform 0.3s;
+        transition: transform 0.3s;
+        transition: transform 0.3s, -webkit-transform 0.3s;
+        -webkit-transform-origin: left;
+        -ms-transform-origin: left;
+            transform-origin: left;
+        pointer-events: none;
+        white-space: nowrap;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        width: 100%;
+        user-select: none;
+        will-change: transform;
+    }
+    .outer-container{
+        position: relative;
+        width: 100%;
+    }
+    .container{
+        width: 100%;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        position: relative;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
+    }    
+    input{
+        font-size: var(--font-size);
+        border: none;
+        background: transparent;
+        outline: none;
+        color: rgba(var(--text-color), 1);
+        width: 100%;
+        font-weight: var(--font-weight);
+    }
+    :host(:not(.outlined)) .animate-label .container input {
+        -webkit-transform: translateY(0.6rem);
+                -ms-transform: translateY(0.6rem);
+            transform: translateY(0.6rem);
+        }
+    
+    :host(:not(.outlined)) .animate-label .label {
+        -webkit-transform: translateY(-0.7em) scale(0.8);
+                -ms-transform: translateY(-0.7em) scale(0.8);
+            transform: translateY(-0.7em) scale(0.8);
+        opacity: 1;
+        color: var(--accent-color)
+    }
+    :host(.outlined) .input {
+        box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
+        background: rgba(var(--foreground-color), 1);
+    }
+    :host(.outlined) .label {
+        width: max-content;
+        margin-left: -0.5rem;
+        padding: 0 0.5rem;
+    }
+    :host(.outlined) .animate-label .label {
+        -webkit-transform: translate(0.1rem, -1.5rem) scale(0.8);
+                -ms-transform: translate(0.1rem, -1.5rem) scale(0.8);
+            transform: translate(0.1rem, -1.5rem) scale(0.8);
+        opacity: 1;
+        background: rgba(var(--foreground-color), 1);
+    }
+    .animate-label:focus-within:not(.readonly) .label{
+        color: var(--accent-color)
+    }
+    .feedback-text{
+        font-size: 0.9rem;
+        width: 100%;
+        color: var(--error-color);
+        padding: 0.6rem 1rem;
+        text-align: left;
+    }
+    .feedback-text:empty{
+        padding: 0;
+    }
+    @media (any-hover: hover){
+        .icon:hover{
+            background: rgba(var(--text-color), 0.1);
+        }
+    }
+    </style>
+    <div class="outer-container">
+        <label part="input" class="input">
+            <slot name="icon"></slot>
+            <div class="container">
+                <input/>
+                <div part="placeholder" class="label"></div>
+            </div>
+            <svg class="icon clear hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>
+        </label>
+        <div class="feedback-text"></div>
+    </div>
+    `;
+    customElements.define('sm-input',
+    class extends HTMLElement {
+
+        static formAssociated = true;
+        
+        constructor() {
+            super()
+            this.attachShadow({
+                mode: 'open'
+            }).append(smInput.content.cloneNode(true))
+        }
+
+        static get observedAttributes() {
+            return ['placeholder']
+        }
+
+        get value() {
+            return this.shadowRoot.querySelector('input').value
+        }
+
+        set value(val) {
+            this.shadowRoot.querySelector('input').value = val;
+            this.checkInput()
+            this.fireEvent()
+        }
+
+        get placeholder() {
+            return this.getAttribute('placeholder')
+        }
+
+        set placeholder(val) {
+            this.setAttribute('placeholder', val)
+        }
+
+        get type() {
+            return this.getAttribute('type')
+        }
+
+        get isValid() {
+            return this.shadowRoot.querySelector('input').checkValidity()
+        }
+
+        get validity() {
+            return this.shadowRoot.querySelector('input').validity
+        }
+
+        set disabled(value) {
+            if (value)
+                this.shadowRoot.querySelector('.input').classList.add('disabled')
+            else
+                this.shadowRoot.querySelector('.input').classList.remove('disabled')
+        }
+        set readOnly(value) {
+            if (value) {
+                this.shadowRoot.querySelector('input').setAttribute('readonly', '')
+                this.shadowRoot.querySelector('.input').classList.add('readonly')
+            } else {
+                this.shadowRoot.querySelector('input').removeAttribute('readonly')
+                this.shadowRoot.querySelector('.input').classList.remove('readonly')
+            }
+        }
+
+        setValidity = (message) => {
+            this.feedbackText.textContent = message
+        }
+
+        showValidity = () => {
+            this.feedbackText.classList.remove('hide-completely')
+        }
+        
+        hideValidity = () => {
+            this.feedbackText.classList.add('hide-completely')
+        }
+
+        focusIn = () => {
+            this.input.focus()
+        }
+
+        focusOut = () => {
+            this.input.blur()
+        }
+
+        fireEvent = () => {
+            let event = new Event('input', {
+                bubbles: true,
+                cancelable: true,
+                composed: true
+            });
+            this.dispatchEvent(event);
+        }
+
+        checkInput = (e) => {
+            if (!this.readonly) {                
+                if (this.input.value !== '') {
+                    this.clearBtn.classList.remove('hide')
+                } else {
+                    this.clearBtn.classList.add('hide')
+                }
+            }
+            if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '') return;
+            if (this.input.value !== '') {
+                if (this.animate)
+                    this.inputParent.classList.add('animate-label')
+                else
+                    this.label.classList.add('hide')
+            } else {
+                if (this.animate)
+                    this.inputParent.classList.remove('animate-label')
+                else
+                    this.label.classList.remove('hide')
+            }
+        }
+
+
+        connectedCallback() {
+            this.inputParent = this.shadowRoot.querySelector('.input')
+            this.clearBtn = this.shadowRoot.querySelector('.clear')
+            this.label = this.shadowRoot.querySelector('.label')
+            this.feedbackText = this.shadowRoot.querySelector('.feedback-text')
+            this.valueChanged = false;
+            this.readonly = false
+            this.isNumeric = false
+            this.min
+            this.max
+            this.animate = this.hasAttribute('animate')
+            this.input = this.shadowRoot.querySelector('input')
+            this.shadowRoot.querySelector('.label').textContent = this.getAttribute('placeholder')
+            if (this.hasAttribute('value')) {
+                this.input.value = this.getAttribute('value')
+                this.checkInput()
+            }
+            if (this.hasAttribute('required')) {
+                this.input.setAttribute('required', '')
+            }
+            if (this.hasAttribute('min')) {
+                let minValue = this.getAttribute('min')
+                this.input.setAttribute('min', minValue)
+                this.min = parseInt(minValue)
+            }
+            if (this.hasAttribute('max')) {
+                let maxValue = this.getAttribute('max')
+                this.input.setAttribute('max', maxValue)
+                this.max = parseInt(maxValue)
+            }
+            if (this.hasAttribute('minlength')) {
+                const minValue = this.getAttribute('minlength')
+                this.input.setAttribute('minlength', minValue)
+            }
+            if (this.hasAttribute('maxlength')) {
+                const maxValue = this.getAttribute('maxlength')
+                this.input.setAttribute('maxlength', maxValue)
+            }
+            if (this.hasAttribute('step')) {
+                const steps = this.getAttribute('step')
+                this.input.setAttribute('step', steps)
+            }
+            if (this.hasAttribute('pattern')) {
+                this.input.setAttribute('pattern', this.getAttribute('pattern'))
+            }
+            if (this.hasAttribute('readonly')) {
+                this.input.setAttribute('readonly', '')
+                this.readonly = true
+            }
+            if (this.hasAttribute('disabled')) {
+                this.inputParent.classList.add('disabled')
+            }
+            if (this.hasAttribute('error-text')) {
+                this.feedbackText.textContent = this.getAttribute('error-text')
+            }
+            if (this.hasAttribute('type')) {
+                if (this.getAttribute('type') === 'number') {
+                    this.input.setAttribute('inputmode', 'numeric')
+                    this.input.setAttribute('type', 'number')
+                    this.isNumeric = true
+                } else
+                    this.input.setAttribute('type', this.getAttribute('type'))
+            } else
+                this.input.setAttribute('type', 'text')
+            this.input.addEventListener('input', e => {
+                this.checkInput(e)
+            })
+            this.clearBtn.addEventListener('click', e => {
+                this.value = ''
+            })
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (oldValue !== newValue) {
+                if (name === 'placeholder') {
+                    this.shadowRoot.querySelector('.label').textContent = newValue;
+                    this.setAttribute('aria-label', newValue);
+                }
+            }
+        }
+    })
+
+
 
     const smSelect = document.createElement('template')
     smSelect.innerHTML = `
@@ -9357,6 +9775,7 @@ Bitcoin.Util = {
     }
 
    window.addEventListener("load", () => {
+
         document.addEventListener("pointerdown", (e) => {
             if (e.target.closest("button, sm-button:not([disable]), .interact")) {
                 createRipple(e, e.target.closest("button, sm-button, .interact"));
@@ -9394,18 +9813,38 @@ Bitcoin.Util = {
         };
     }
 
+    let timerId;
+    function throttle(func, delay) {
+        // If setTimeout is already scheduled, no need to do anything
+        if (timerId) {
+            return;
+        }
 
-   let prefersInr = true
+        // Schedule a setTimeout after delay seconds
+        timerId = setTimeout(function () {
+            func();
+
+            // Once setTimeout function execution is finished, timerId = undefined so that in
+            // the next scroll event function execution can be scheduled by the setTimeout
+            timerId = undefined;
+        }, delay);
+    }
+
+
+   let preferredCurrency
+   const currencySymbols = {
+       usd: '$',
+       inr: '₹'
+   }
     if(localStorage.getItem('preferred-currency')){
         if(localStorage.getItem('preferred-currency') === 'inr')
         {
-            prefersInr = true
             showCurrentPrices()
         }
         else{
-            prefersInr = false
             showCurrentPrices()
         }
+        preferredCurrency = localStorage.getItem('preferred-currency')
         document.querySelector(`sm-option[value="${localStorage.getItem('preferred-currency')}"]`).setAttribute('selected', '')
     }
     else{
@@ -9415,19 +9854,19 @@ Bitcoin.Util = {
 
 
     getRef('currency_selector').addEventListener('change', e => {
-        prefersInr = e.detail.value === 'inr' ? true : false
+        preferredCurrency = e.detail.value
         localStorage.setItem('preferred-currency', e.detail.value)
         document.querySelectorAll('bond-transaction').forEach(bond => bond.toggleCurrency())
         showCurrentPrices()
     })
     
     function showCurrentPrices(){
-        if(prefersInr){
+        if(preferredCurrency === 'inr'){
             getRef('usd-rate').classList.remove('hide-completely')
             getRef('btc-usd-rate').classList.add('hide-completely')
             getRef('btc-inr-rate').classList.remove('hide-completely')
         }
-        else{
+        else if(preferredCurrency === 'usd'){
             getRef('usd-rate').classList.add('hide-completely')
             getRef('btc-usd-rate').classList.remove('hide-completely')
             getRef('btc-inr-rate').classList.add('hide-completely')
@@ -9491,6 +9930,27 @@ Bitcoin.Util = {
         getRef(target).classList.remove('hide-completely')
     }
 
+    getRef('search_bonds').addEventListener('input', e => {
+        throttle(() => {
+            let hiddenElements = 0
+            for(child of getRef('bond_list').children){
+                if(child.dataset.floId.toLowerCase().includes(getRef('search_bonds').value.toLowerCase())){
+                    child.classList.remove('hide-completely')
+                    hiddenElements++
+                }
+                else{
+                    child.classList.add('hide-completely')
+                }
+            }
+            if(hiddenElements === getRef('bond_list').children.length){
+                getRef('bond_list__empty-state').classList.add('hide-completely')
+            }
+            else{
+                getRef('bond_list__empty-state').classList.remove('hide-completely')
+            }
+        }, 100)
+    })
+
 </script>
 <script>
     function onLoadStartUp() {
@@ -9529,10 +9989,14 @@ Bitcoin.Util = {
                 href: `https://livenet.flocha.in/tx/${i}`,
                 floId: b.floID,
                 bondStartDate: dateFormat(b.startDate),
-                amountInvestedInr: b.amount.toFixed(2),
-                amountInvestedUsd: (b.amount / b.USD_base).toFixed(2),
-                netValueInr: b.netValue.toFixed(2),
-                netValueUsd: (b.netValue.toFixed(2) / USD_current).toFixed(2),
+                amountInvested : {
+                    inr: b.amount.toFixed(2),
+                    usd: (b.amount / b.USD_base).toFixed(2)
+                },
+                netValue: {
+                    inr: b.netValue.toFixed(2),
+                    usd: (b.netValue.toFixed(2) / USD_current).toFixed(2)
+                },
                 guaranteedInterest: b.minIpa * 100 + '%',
                 guaranteedInterestDuration: period(b.maxPeriod),
                 gainShare: b.cut * 100 + '%',
@@ -9753,7 +10217,7 @@ Bitcoin.Util = {
         evt.preventDefault()
         let f = evt.target;
 
-        let bondStr = createBondString(f["base"].value, dateFormat(f["start_date"].value), f["gi_r"].value, f["gi_pv"].value + " " + f["gi_pt"].value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value + " " + f["lockin_t"].value, f["floid"].value);
+        let bondStr = createBondString(f["base"].value, dateFormat(f["start_date"].value), f["gi_r"].value, f["gi_pv"].value + " " + getRef("gi_pt").value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value + " " + getRef("lockin_t").value, f["floid"].value);
         if (!confirm(bondStr.replace(/\|/g, "\n") + "\n\nDo you want to continue?"))
             return;
         let privKey = prompt(bondStr + `\n\nEnter Private key of adminID (${floGlobals.adminID})`);
