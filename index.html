@@ -9936,17 +9936,18 @@ Bitcoin.Util = {
             for(child of getRef('bond_list').children){
                 if(child.dataset.floId.toLowerCase().includes(getRef('search_bonds').value.toLowerCase())){
                     child.classList.remove('hide-completely')
-                    hiddenElements++
                 }
                 else{
                     child.classList.add('hide-completely')
+                    hiddenElements++
                 }
             }
+            console.log(hiddenElements, getRef('bond_list').children.length)
             if(hiddenElements === getRef('bond_list').children.length){
-                getRef('bond_list__empty-state').classList.add('hide-completely')
+                getRef('bond_list__empty-state').classList.remove('hide-completely')
             }
             else{
-                getRef('bond_list__empty-state').classList.remove('hide-completely')
+                getRef('bond_list__empty-state').classList.add('hide-completely')
             }
         }, 100)
     })
