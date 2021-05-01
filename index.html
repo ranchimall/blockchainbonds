@@ -9963,7 +9963,7 @@ Bitcoin.Util = {
     }
 
     function renderData(data) {
-        let period = n => {
+        const period = n => {
             let y = n,
                 m = n * 12,
                 w = n * 52.1429,
@@ -9978,6 +9978,23 @@ Bitcoin.Util = {
                 return d + ` Day${d > 1 ? 's' : ''}`;
             else
                 return n
+        }
+
+        const dateAdder = function(start_date, n) {
+            let date = new Date(start_date);
+            let y = n,
+                m = n * 12,
+                w = n * 52.1429,
+                d = n * 365;
+            if (y == Math.floor(y))
+                date.setFullYear(date.getFullYear() + y);
+            else if (m == Math.floor(m))
+                date.setMonth(date.getMonth() + m);
+            else if (w == Math.floor(w))
+                date.setDate(date.getDate() + w * 7);
+            else if (d == Math.floor(d))
+                date.setDate(date.getDate() + d);
+            return date;
         }
 
         const frag = document.createDocumentFragment()
@@ -9996,13 +10013,13 @@ Bitcoin.Util = {
                 },
                 netValue: {
                     inr: b.netValue.toFixed(2),
-                    usd: (b.netValue.toFixed(2) / USD_current).toFixed(2)
+                    usd: (b.netValue / USD_current).toFixed(2)
                 },
                 guaranteedInterest: b.minIpa * 100 + '%',
                 guaranteedInterestDuration: period(b.maxPeriod),
                 gainShare: b.cut * 100 + '%',
                 lockinPeriod: period(b.lockinPeriod),
-                lockinEnd: dateFormat(new Date(b.startDate).getTime() + b.lockinPeriod * 3.154e+10),
+                lockinEnd: dateFormat(dateAdder(b.startDate, b.lockinPeriod)),
                 baseBtcRate: b.BTC_base,
                 usdRate: b.USD_base
             }
