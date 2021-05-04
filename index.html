@@ -9848,7 +9848,7 @@ Bitcoin.Util = {
         document.querySelector(`sm-option[value="${localStorage.getItem('preferred-currency')}"]`).setAttribute('selected', '')
     }
     else{
-        preferredCurrency = inr
+        preferredCurrency = 'inr'
         localStorage.setItem('preferred-currency', 'inr')
         getRef('currency_selector').value = 'INR'
         document.querySelector(`sm-option[value="inr"]`).setAttribute('selected', '')
