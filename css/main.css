@@ -406,11 +406,9 @@ sm-option {
 .dropdown__panel {
   position: absolute;
   display: grid;
-  gap: 2rem;
   left: 0;
   right: 0;
   top: 100%;
-  padding: 1rem;
   margin: 0 1rem;
   margin-top: 0.5rem;
   border-radius: 0.3rem;
@@ -420,6 +418,9 @@ sm-option {
   width: min(24rem, calc(100vw - 2rem));
   background-color: rgba(var(--foreground-color), 1);
   box-shadow: 0 2rem 2rem -0.5rem rgba(0, 0, 0, 0.16);
+}
+.dropdown__panel li {
+  padding: 1rem;
 }
 
 #profile_button {

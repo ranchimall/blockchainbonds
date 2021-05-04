@@ -39,8 +39,7 @@
             </div>
         </div>
         <div id="current_price" class="grid gap-1 flow-column align-center">
-            <span id="btc-usd-rate" class="weight-700 hide-completely"></span>
-            <span id="btc-inr-rate" class="weight-700"></span>
+            <span id="btc-usd-rate" class="weight-700"></span>
             <span id="usd-rate" class="weight-700"></span>
         </div>
         <div class="dropdown">
@@ -8232,7 +8231,7 @@ Bitcoin.Util = {
             </div>
             <div class="transaction-column">
                 <span class="label">Net bond value</span>
-                <span class="value net-value" style="color: var(--green)"></span>
+                <span class="value net-value-primary" style="color: var(--green)"></span>
             </div>
             <div class="transaction-column">
                 <span class="label">Guaranteed interest</span>
@@ -8264,6 +8263,10 @@ Bitcoin.Util = {
                 <span class="label">USD rate</span>
                 <span class="value usd-rate"></span>
             </div>
+            <div class="transaction-column">
+                <span class="label"></span>
+                <span class="value net-value-sec" style="color: var(--green)"></span>
+            </div>
         </div>
     </li>
     `
@@ -8274,8 +8277,8 @@ Bitcoin.Util = {
                 mode: 'open'
             })
             this.shadow.append(bondTemplate.content.cloneNode(true))
-            this.amountInvested
-            this.netValue
+            this.amountInvested = {}
+            this.netValue = {}
             this.moreDetailsButton = this.shadow.querySelector('button')
             this.moreDetails = this.shadow.querySelector('.more-details')
             this.areDetailsOpen = false
@@ -8296,26 +8299,29 @@ Bitcoin.Util = {
                 usdRate
             } = obj
 
+            
             this.amountInvested = amountInvested
             this.netValue = netValue
-
+            
             this.dataset.floId = floId
             this.shadow.querySelector('.link').href = href
             this.shadow.querySelector('.flo-id').textContent = floId
             this.shadow.querySelector('.bond-start-date').textContent = bondStartDate
             this.shadow.querySelector('.bond-end-date').textContent = lockinEnd
-            this.shadow.querySelector('.amount-invested').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
-            this.shadow.querySelector('.net-value').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
             this.shadow.querySelector('.guaranteed-interest').textContent = `${guaranteedInterest} P.A for ${guaranteedInterestDuration}`
             this.shadow.querySelector('.gain-share').textContent = gainShare
             this.shadow.querySelector('.lock-in-period').textContent = lockinPeriod
             this.shadow.querySelector('.base-btc-rate').textContent = `$${baseBtcRate}`
             this.shadow.querySelector('.usd-rate').textContent = `₹${usdRate}`
+            this.toggleCurrency() 
         }
 
         toggleCurrency = () => {
+            const secCurrency = preferredCurrency === 'usd' ? 'inr' : 'usd'
             this.shadow.querySelector('.amount-invested').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
-            this.shadow.querySelector('.net-value').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
+            this.shadow.querySelector('.net-value-primary').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
+            this.shadow.querySelector('.net-value-sec').textContent = `${currencySymbols[secCurrency]}${this.netValue[secCurrency]}`
+            this.shadow.querySelector('.net-value-sec').previousElementSibling.textContent = `Net bond value(${secCurrency.toUpperCase()})`
         }
 
         toggleDetails = () => {
@@ -8986,6 +8992,7 @@ Bitcoin.Util = {
                     this.availableOptions.forEach(option => {
                         if(option.hasAttribute('selected')){
                             this.optionText.textContent = option.textContent
+                            this.setAttribute('value', option.getAttribute('value'))
                             option.classList.add('check-selected')
                             previousOption = option
                         }
@@ -9837,19 +9844,14 @@ Bitcoin.Util = {
        inr: '₹'
    }
     if(localStorage.getItem('preferred-currency')){
-        if(localStorage.getItem('preferred-currency') === 'inr')
-        {
-            showCurrentPrices()
-        }
-        else{
-            showCurrentPrices()
-        }
         preferredCurrency = localStorage.getItem('preferred-currency')
         document.querySelector(`sm-option[value="${localStorage.getItem('preferred-currency')}"]`).setAttribute('selected', '')
     }
     else{
+        preferredCurrency = inr
         localStorage.setItem('preferred-currency', 'inr')
         getRef('currency_selector').value = 'INR'
+        document.querySelector(`sm-option[value="inr"]`).setAttribute('selected', '')
     }
 
 
@@ -9857,21 +9859,8 @@ Bitcoin.Util = {
         preferredCurrency = e.detail.value
         localStorage.setItem('preferred-currency', e.detail.value)
         document.querySelectorAll('bond-transaction').forEach(bond => bond.toggleCurrency())
-        showCurrentPrices()
     })
     
-    function showCurrentPrices(){
-        if(preferredCurrency === 'inr'){
-            getRef('usd-rate').classList.remove('hide-completely')
-            getRef('btc-usd-rate').classList.add('hide-completely')
-            getRef('btc-inr-rate').classList.remove('hide-completely')
-        }
-        else if(preferredCurrency === 'usd'){
-            getRef('usd-rate').classList.add('hide-completely')
-            getRef('btc-usd-rate').classList.remove('hide-completely')
-            getRef('btc-inr-rate').classList.add('hide-completely')
-        }
-    }
 
     let isDropdownOpen = false
     
@@ -10135,7 +10124,6 @@ Bitcoin.Util = {
             console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
             getRef("usd-rate").textContent = `USD: ₹${rates.USD_INR.toFixed(2)}`;
             getRef("btc-usd-rate").textContent = `BTC: $${rates.BTC_USD.toFixed(2)}`;
-            getRef("btc-inr-rate").textContent = `BTC: ₹${rates.BTC_INR.toFixed(2)}`;
             getRef("bond_list").innerHTML = '';
             compactIDB.readAllData("bonds")
                 .then(result => renderData(result))
