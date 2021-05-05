@@ -527,6 +527,7 @@ bond-transaction {
   padding: 1rem;
   border-radius: 0.3rem;
   background-color: rgba(var(--foreground-color), 1);
+  box-shadow: 0 1rem 2rem -1rem rgba(0, 0, 0, 0.16);
 }
 .bond-placeholder .placeholder__block:first-of-type {
   width: min(24rem, 100%);
