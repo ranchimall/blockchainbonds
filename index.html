@@ -8127,6 +8127,28 @@ Bitcoin.Util = {
     }
 </script>
 <script id="ui">
+
+    const render = {
+        bondPlaceholder(){
+            const bond = document.createElement('li')
+            bond.classList.add('bond-placeholder', 'grid')
+            bond.innerHTML = `
+                <div class="placeholder__block"></div>
+                <div class="placeholder__block"></div>
+                <div class="flex-grid justify-start">
+                    <div class="placeholder__block"></div>
+                    <div class="placeholder__block"></div>
+                    <div class="placeholder__block"></div>
+                </div>
+                <div class="grid flow-column gap-1 justify-end">
+                    <div class="placeholder__block"></div>
+                    <div class="placeholder__block"></div>
+                </div>
+            `
+            return bond
+        }
+    }
+
     const bondTemplate = document.createElement('template')
     bondTemplate.innerHTML = `
     <style>
@@ -9947,8 +9969,18 @@ Bitcoin.Util = {
         }, 100)
     })
 
+    function renderBondPlaceholder(){
+        getRef('bond_list').innerHTML = ``
+        const frag = document.createDocumentFragment()
+        for (let index = 0; index < 4; index++) {
+            frag.append(render.bondPlaceholder())            
+        }
+        getRef('bond_list').append(frag)
+    }
+
 </script>
 <script>
+    renderBondPlaceholder()
     function onLoadStartUp() {
         compactIDB.initDB(floGlobals.application, {
                 bonds: {},
@@ -9957,7 +9989,7 @@ Bitcoin.Util = {
             .catch(error => console.error(error))
     }
 
-    function renderData(data) {
+    async function renderData(data, wipe) {
         const period = n => {
             let y = n,
                 m = n * 12,
@@ -10023,9 +10055,7 @@ Bitcoin.Util = {
             bond.data = obj
             bond.setAttribute("title", data[i].replace(/\|/g, "\n"))
             frag.append(bond)
-
         }
-
         getRef('bond_list').append(frag)
     }
 
@@ -10124,19 +10154,23 @@ Bitcoin.Util = {
 
     const refreshBtn = getRef('refresh-btn');
     refreshBtn.addEventListener("click", evt => {
+        renderBondPlaceholder()
         getCurrentRates().then(rates => {
             USD_current = rates.USD_INR;
             BTC_current = rates.BTC_USD;
             console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
             getRef("usd-rate").textContent = `USD: ₹${rates.USD_INR.toFixed(2)}`;
             getRef("btc-usd-rate").textContent = `BTC: $${rates.BTC_USD.toFixed(2)}`;
-            getRef("bond_list").innerHTML = '';
-            compactIDB.readAllData("bonds")
-                .then(result => renderData(result))
-                .catch(error => console.error(error))
             refreshBlockchainData()
-                .then(result => renderData(result))
+            .then(result => {
+                compactIDB.readAllData("bonds")
+                .then(result => {
+                    document.querySelectorAll('.bond-placeholder').forEach(bond => bond.remove())
+                    renderData(result)
+                })
                 .catch(error => console.error(error))
+            })
+            .catch(error => console.error(error))
         });
     });
 
