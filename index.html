@@ -8227,7 +8227,7 @@ Bitcoin.Util = {
         <div class="flex-grid">
             <div class="transaction-column">
                 <span class="label">Amount intvested</span>
-                <span class="value amount-invested"></span>
+                <span class="value amount-invested-primary"></span>
             </div>
             <div class="transaction-column">
                 <span class="label">Net bond value</span>
@@ -8262,6 +8262,10 @@ Bitcoin.Util = {
             <div class="transaction-column">
                 <span class="label">USD rate</span>
                 <span class="value usd-rate"></span>
+            </div>
+            <div class="transaction-column">
+                <span class="label"></span>
+                <span class="value amount-invested-sec"></span>
             </div>
             <div class="transaction-column">
                 <span class="label"></span>
@@ -8318,7 +8322,9 @@ Bitcoin.Util = {
 
         toggleCurrency = () => {
             const secCurrency = preferredCurrency === 'usd' ? 'inr' : 'usd'
-            this.shadow.querySelector('.amount-invested').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
+            this.shadow.querySelector('.amount-invested-primary').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
+            this.shadow.querySelector('.amount-invested-sec').textContent = `${currencySymbols[secCurrency]}${this.amountInvested[secCurrency]}`
+            this.shadow.querySelector('.amount-invested-sec').previousElementSibling.textContent = `Amount invested(${secCurrency.toUpperCase()})`
             this.shadow.querySelector('.net-value-primary').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
             this.shadow.querySelector('.net-value-sec').textContent = `${currencySymbols[secCurrency]}${this.netValue[secCurrency]}`
             this.shadow.querySelector('.net-value-sec').previousElementSibling.textContent = `Net bond value(${secCurrency.toUpperCase()})`
