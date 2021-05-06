@@ -87,7 +87,7 @@
     </main>
     <article id="add_bond_page" class="page page-layout hide-completely">
         <header class="flex margin-top-1-5 align-center margin-bottom-1-5r">
-            <button onclick="showPage('home_page')">
+            <button class="back-button" onclick="showPage('home_page')">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z"/></svg>
             </button>
             <h3>Admin Panel</h3>
@@ -128,7 +128,7 @@
                         <sm-option value="day(s)">day(s)</sm-option>
                     </sm-select>
                 </div>
-            </label>
+            </div>
             <label class="grid gap-0-5">
                 Gain share (%)
                 <input type="number" name="cut" min=0 max=100>
@@ -144,11 +144,27 @@
                         <sm-option value="day(s)">day(s)</sm-option>
                     </sm-select>
                 </div>
-            </label>
+            </div>
             <div class="grid flow-column align-center gap-1 justify-start">
-                <button type="submit" class="button--primary">Add Bond</button>
+                <button type="submit" class="button--primary">Continue</button>
                 <button type="reset">Clear</button>
             </div>
+        </form>
+    </article>
+    <article id="confirm_bond_page" class="page page-layout hide-completely">
+        <header class="flex margin-top-1-5 align-center margin-bottom-1-5r">
+            <button class="back-button" onclick="showPage('add_bond_page')">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z"/></svg>
+            </button>
+            <h3>Confirm Details</h3>
+        </header>
+        <form class="grid gap-1-5" onsubmit="return false">
+            <section id="bond_details"></section>
+            <div class="grid">
+                <h4 class="weight-400 margin-bottom-1r" id="admin_id"></h4>
+                <sm-input id="get_private_key" type="password" placeholder="Private key"></sm-input>
+            </div>
+            <button id="add_bond_button" type="submit" class="button--primary justify-self-start">Add Bond</button>
         </form>
     </article>
 <script id="init_lib" version="1.0.1">
@@ -9945,6 +9961,9 @@ Bitcoin.Util = {
     function showPage(target){
         document.querySelectorAll('.page').forEach(page => page.classList.add('hide-completely'))
         getRef(target).classList.remove('hide-completely')
+        if(target !== 'confirm_bond_page'){
+            getRef('get_private_key').value = ''
+        }
     }
 
     getRef('search_bonds').addEventListener('input', e => {
@@ -10264,18 +10283,27 @@ Bitcoin.Util = {
         let f = evt.target;
 
         let bondStr = createBondString(f["base"].value, dateFormat(f["start_date"].value), f["gi_r"].value, f["gi_pv"].value + " " + getRef("gi_pt").value, f["cut"].value, f["amount"].value, f["usd_rate"].value, f["lockin_v"].value + " " + getRef("lockin_t").value, f["floid"].value);
-        if (!confirm(bondStr.replace(/\|/g, "\n") + "\n\nDo you want to continue?"))
-            return;
-        let privKey = prompt(bondStr + `\n\nEnter Private key of adminID (${floGlobals.adminID})`);
-        if (!privKey)
-            return;
-        if (!floCrypto.verifyPrivKey(privKey, floGlobals.adminID))
-            return alert("Access Denied! incorrect private key");
-        console.log(bondStr);
-        floBlockchainAPI.writeData(floGlobals.adminID, bondStr, privKey, f["floid"].value).then(result => {
-            console.log(result);
-            alert("Bond added in blockchain");
-        }).catch(error => reject(error))
+        
+        getRef('bond_details').innerHTML = bondStr.replace(/\|/g, "<br>")
+
+        getRef('admin_id').innerHTML = `Enter Private key of adminID <h5 class="weight-400 marg">${floGlobals.adminID}</h5>`
+
+        showPage('confirm_bond_page')
+        // bond_details = prompt(bondStr + `\n\nEnter Private key of adminID (${floGlobals.adminID})`);
+        
+        getRef('add_bond_button').onclick = () => {
+            const privKey = getRef('get_private_key').value
+            if (!floCrypto.verifyPrivKey(privKey, floGlobals.adminID)){
+                notify("Access Denied! incorrect private key", 'error');
+                return
+            }
+            console.log(bondStr);
+            floBlockchainAPI.writeData(floGlobals.adminID, bondStr, privKey, f["floid"].value).then(result => {
+                console.log(result);
+                showPage('add_bond_page')
+                notify("Bond added in blockchain", 'success');
+            }).catch(error => reject(error))
+        }
     })
 </script>
 </body>
