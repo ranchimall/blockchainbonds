@@ -92,7 +92,7 @@
             </button>
             <h3>Admin Panel</h3>
         </header>
-        <form id="add-bond-form" class="grid gap-1-5">
+        <form id="add_bond_form" class="grid gap-1-5">
             <label class="grid gap-0-5">
                 FLO ID
                 <input type="text" name="floid" pattern="[0-9a-zA-Z]{34}" required>
@@ -9964,6 +9964,9 @@ Bitcoin.Util = {
         if(target !== 'confirm_bond_page'){
             getRef('get_private_key').value = ''
         }
+        if(target === 'home_page'){
+            getRef("add_bond_form").reset()
+        }
     }
 
     getRef('search_bonds').addEventListener('input', e => {
@@ -10278,7 +10281,7 @@ Bitcoin.Util = {
         ].join("|");
     }
 
-    getRef("add-bond-form").addEventListener("submit", evt => {
+    getRef("add_bond_form").addEventListener("submit", evt => {
         evt.preventDefault()
         let f = evt.target;
 
@@ -10302,6 +10305,7 @@ Bitcoin.Util = {
                 console.log(result);
                 showPage('add_bond_page')
                 notify("Bond added in blockchain", 'success');
+                getRef("add_bond_form").reset()
             }).catch(error => reject(error))
         }
     })
