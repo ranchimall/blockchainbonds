@@ -10075,7 +10075,7 @@ Bitcoin.Util = {
 
             const bond = document.createElement('bond-transaction')
             bond.data = obj
-            bond.setAttribute("title", data[i].replace(/\|/g, "\n"))
+            //bond.setAttribute("title", data[i].replace(/\|/g, "\n"))
             frag.append(bond)
         }
         getRef('bond_list').append(frag)
