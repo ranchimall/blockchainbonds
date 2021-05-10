@@ -116,7 +116,7 @@
             </label>
             <label class="grid gap-0-5">
                 Base BTC value ($)
-                <input type="text" name="base" pattern="^[\d,]+.?\d$" required>
+                <input type="text" name="base" pattern="[\d,]+.?\d" required>
             </label>
             <label class="grid gap-0-5">
                 Base USD rate (₹)
@@ -10089,7 +10089,7 @@ Bitcoin.Util = {
 
             const bond = document.createElement('bond-transaction')
             bond.data = obj
-            bond.setAttribute("title", data[i].replace(/\|/g, "\n"))
+            //bond.setAttribute("title", data[i].replace(/\|/g, "\n"))
             frag.append(bond)
         }
         getRef('bond_list').append(frag)
