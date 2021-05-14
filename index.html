@@ -8390,10 +8390,10 @@ Bitcoin.Util = {
             const secCurrency = preferredCurrency === 'usd' ? 'inr' : 'usd'
             this.shadow.querySelector('.amount-invested-primary').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
             this.shadow.querySelector('.amount-invested-sec').textContent = `${currencySymbols[secCurrency]}${this.amountInvested[secCurrency]}`
-            this.shadow.querySelector('.amount-invested-sec').previousElementSibling.textContent = `Amount invested(${secCurrency.toUpperCase()})`
+            this.shadow.querySelector('.amount-invested-sec').previousElementSibling.textContent = `Invested(${secCurrency.toUpperCase()})`
             this.shadow.querySelector('.net-value-primary').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
             this.shadow.querySelector('.net-value-sec').textContent = `${currencySymbols[secCurrency]}${this.netValue[secCurrency]}`
-            this.shadow.querySelector('.net-value-sec').previousElementSibling.textContent = `Net bond value(${secCurrency.toUpperCase()})`
+            this.shadow.querySelector('.net-value-sec').previousElementSibling.textContent = `Present bond value(${secCurrency.toUpperCase()})`
         }
 
         toggleDetails = () => {
