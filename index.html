@@ -8372,6 +8372,14 @@ Bitcoin.Util = {
             
             this.amountInvested = amountInvested
             this.netValue = netValue
+
+            for (let item in this.amountInvested){
+                this.amountInvested[item] = parseFloat(this.amountInvested[item])
+            }
+            
+            for (let item in this.netValue){
+                this.netValue[item] = parseFloat(this.netValue[item])
+            }
             
             this.dataset.floId = floId
             this.shadow.querySelector('.link').href = href
@@ -8388,11 +8396,11 @@ Bitcoin.Util = {
 
         toggleCurrency = () => {
             const secCurrency = preferredCurrency === 'usd' ? 'inr' : 'usd'
-            this.shadow.querySelector('.amount-invested-primary').textContent = `${currencySymbols[preferredCurrency]}${this.amountInvested[preferredCurrency]}`
-            this.shadow.querySelector('.amount-invested-sec').textContent = `${currencySymbols[secCurrency]}${this.amountInvested[secCurrency]}`
+            this.shadow.querySelector('.amount-invested-primary').textContent = `${this.amountInvested[preferredCurrency].toLocaleString(`en-${preferredCurrency.substring(0,2)}`, {style: 'currency', currency: preferredCurrency})}`
+            this.shadow.querySelector('.amount-invested-sec').textContent = `${this.amountInvested[secCurrency].toLocaleString(`en-${secCurrency.substring(0,2)}`, {style: 'currency', currency: secCurrency})}`
             this.shadow.querySelector('.amount-invested-sec').previousElementSibling.textContent = `Invested(${secCurrency.toUpperCase()})`
-            this.shadow.querySelector('.net-value-primary').textContent = `${currencySymbols[preferredCurrency]}${this.netValue[preferredCurrency]}`
-            this.shadow.querySelector('.net-value-sec').textContent = `${currencySymbols[secCurrency]}${this.netValue[secCurrency]}`
+            this.shadow.querySelector('.net-value-primary').textContent = `${this.netValue[preferredCurrency].toLocaleString(`en-${preferredCurrency.substring(0,2)}`, {style: 'currency', currency: preferredCurrency})}`
+            this.shadow.querySelector('.net-value-sec').textContent = `${this.netValue[secCurrency].toLocaleString(`en-${secCurrency.substring(0,2)}`, {style: 'currency', currency: secCurrency})}`
             this.shadow.querySelector('.net-value-sec').previousElementSibling.textContent = `Present bond value(${secCurrency.toUpperCase()})`
         }
 
@@ -9911,10 +9919,7 @@ Bitcoin.Util = {
 
 
    let preferredCurrency
-   const currencySymbols = {
-       usd: '$',
-       inr: '₹'
-   }
+
     if(localStorage.getItem('preferred-currency')){
         preferredCurrency = localStorage.getItem('preferred-currency')
         document.querySelector(`sm-option[value="${localStorage.getItem('preferred-currency')}"]`).setAttribute('selected', '')
