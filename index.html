@@ -8389,7 +8389,7 @@ Bitcoin.Util = {
             this.shadow.querySelector('.guaranteed-interest').textContent = `${guaranteedInterest} P.A for ${guaranteedInterestDuration}`
             this.shadow.querySelector('.gain-share').textContent = gainShare
             this.shadow.querySelector('.lock-in-period').textContent = lockinPeriod
-            this.shadow.querySelector('.base-btc-rate').textContent = `$${baseBtcRate}`
+            this.shadow.querySelector('.base-btc-rate').textContent = `${parseFloat(baseBtcRate).toLocaleString(`en-US`, {style: 'currency', currency: 'USD'})}`
             this.shadow.querySelector('.usd-rate').textContent = `₹${usdRate}`
             this.toggleCurrency() 
         }
@@ -10219,7 +10219,7 @@ Bitcoin.Util = {
             BTC_current = rates.BTC_USD;
             console.log(`USD rate: ${USD_current} INR\nBTC rate: ${BTC_current} USD`);
             getRef("usd-rate").textContent = `USD: ₹${rates.USD_INR.toFixed(2)}`;
-            getRef("btc-usd-rate").textContent = `BTC: $${rates.BTC_USD.toFixed(2)}`;
+            getRef("btc-usd-rate").textContent = `BTC: ${parseFloat(rates.BTC_USD.toFixed(2)).toLocaleString(`en-US`, {style: 'currency', currency: 'USD'})}`;
             refreshBlockchainData()
             .then(result => {
                 compactIDB.readAllData("bonds")
