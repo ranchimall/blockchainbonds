@@ -25,7 +25,6 @@
     <script>
         function onLoadStartUp() {
             floExchangeAPI.init().then(result => {
-                console.debug(result)
                 compactIDB.initDB(floGlobals.application, {
                     bonds: {},
                     closings: {},
@@ -2125,7 +2124,19 @@
     async function renderBondClosingData(data){
         for(let i in data){
             let b = blockchainBond.parse.end(data[i]);
-            //TODO render bond closing (should be mapped with bond details that were rendered)
+            /*TODO: UI: render bond closing 
+            Note: should be mapped with bond details that were rendered
+            if closed, netVal shoud not be displayed
+            b -> Object {
+                bondID: id of the bond closed (map to var i in renderBondData's loop)
+                BTC_net: BTC value at closing date
+                endDate: closing date
+                amountFinal: amount at closing
+                payment_refRef: if amount if withdrawn by token system, txid of token transfer
+                USD_net: USD value at closing date
+                refSign: user signature for closing (hidden)
+            }
+            */
         }
     }
 
@@ -2142,7 +2153,6 @@
                 compactIDB.readAllData("bonds").then(result => {
                     renderBondData(result);
                     compactIDB.readAllData('closings').then(result => {
-                        //TODO: 
                         renderBondClosingData(result);
                         showPage('home_page')
                     }).catch(error => console.error(error))

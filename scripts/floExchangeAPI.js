@@ -473,6 +473,9 @@
         adminID: {
             get: () => DEFAULT.marketID
         },
+        application: {
+            get: () => DEFAULT.marketApp
+        },
         nodeList: {
             get: () => {
                 if (Array.isArray(nodeList))
@@ -488,7 +491,7 @@
             let curPos = fetch_api.curPos || 0;
             if (curPos >= nodeList.length)
                 return reject(ExchangeError(ExchangeError.NODES_OFFLINE_CODE, 'No Node online! Refresh the page or try again later', errorCode.NODES_OFFLINE));
-            let url = "http://" + nodeURL[nodeList[curPos]];
+            let url = "https://" + nodeURL[nodeList[curPos]];
             (options ? fetch(url + api, options) : fetch(url + api))
                 .then(result => resolve(result)).catch(error => {
                     console.warn(nodeList[curPos], 'is offline');
