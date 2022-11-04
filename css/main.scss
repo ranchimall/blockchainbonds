@@ -503,12 +503,13 @@ ul {
   height: 2rem;
   fill: rgba(var(--text-color), 1);
 }
-
-#loader {
-  display: flex;
-  position: relative;
+#main_loader {
   width: 4rem;
   height: 8rem;
+}
+.loader {
+  display: flex;
+  position: relative;
   fill: none;
   stroke-width: 4;
   stroke-linecap: round;
@@ -668,6 +669,12 @@ sm-option {
   display: grid;
   gap: 1rem;
   align-content: flex-start;
+  .loader {
+    height: 2rem;
+    width: 2rem;
+    justify-self: center;
+    margin-top: 4vw;
+  }
 }
 
 .bond-transaction {
