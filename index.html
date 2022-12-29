@@ -966,7 +966,7 @@
             buttonLoader('withdraw_private_key_button', true)
             const privKey = getRef('withdraw_private_key').value
             const { bondId, floId } = floGlobals.withdrawing
-            floExchangeAPI.closeBobsFundInvestment(bondId, floId, privKey).then(result => {
+            floExchangeAPI.closeBlockchainBond(bondId, floId, privKey).then(result => {
                 console.log(result)
                 showChildElement(getRef('withdraw_process'), 1, { entry: slideInLeft, exit: slideOutLeft });
                 const withdrawButton = document.getElementById(floGlobals.withdrawId.join('_'))?.querySelector('.bond-transaction__withdraw')
