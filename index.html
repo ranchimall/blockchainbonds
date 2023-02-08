@@ -25,6 +25,7 @@
     <script src="scripts/floBlockchainAPI.js"></script>
     <script src="scripts/floExchangeAPI.js"></script>
     <script src="scripts/compactIDB.js"></script>
+    <script src="scripts/btcOperator.js"></script>
     <script src="scripts/bonds.js"></script>
     <script src="scripts/components.min.js"></script>
     <script src="https://unpkg.com/uhtml@3.0.1/es.js"></script>
@@ -142,7 +143,7 @@
                 typically 50% of all Bitcoin price gains whichever is higher. <br> <strong> It offers full capital
                     protection if Bitcoin prices fall below acquisition price.</strong></p>
         </section>
-        <sm-input id="search_bonds" type="search" placeholder="Search bonds with FLO address">
+        <sm-input id="search_bonds" type="search" placeholder="Search bonds with FLO/BTC address">
             <svg class="icon" slot="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24"
                 width="24px" fill="#000000">
                 <path d="M0 0h24v24H0V0z" fill="none"></path>
@@ -639,11 +640,16 @@
                     usdRate,
                 } = details
                 const hasMatured = new Date(lockinEnd) < new Date()
+                const btcId = btcOperator.convert.legacy2bech(floId)
                 return html`
-                    <li id=${id} class="bond-transaction" data-flo-id=${floId}>
+                    <li id=${id} class="bond-transaction" .dataset=${{ floId, btcId }}>
                         <div class="flex flex-direction-column">
                             <span class="label">FLO address</span>
                             <span class="value flo-id">${floId}</span>
+                        </div>
+                        <div class="flex flex-direction-column">
+                            <span class="label">BTC address</span>
+                            <span class="value btc-id">${btcId}</span>
                         </div>
                         <div class="flex-grid">
                             <div class="flex flex-direction-column justify-self-end">
@@ -708,8 +714,9 @@
                     refSign,
                 } = details
                 const { amountInvested, netValue } = floGlobals.bonds[bondID]
+                const btcId = btcOperator.convert.legacy2bech(floId)
                 return html`
-                    <li id=${bondID} class="bond-transaction bond-transaction--closed" data-flo-id=${floId}>
+                    <li id=${bondID} class="bond-transaction bond-transaction--closed" .dataset=${{ floId, btcId }}>
                         <div class="flex align-items-center space-between w-100">
                             <span class="tag">Closed: ${blockchainBond.dateFormat(endDate)}</span>
                         </div>
@@ -717,6 +724,10 @@
                             <div class="flex flex-direction-column" style="flex-basis: 36ch">
                                 <span class="label">FLO address</span>
                                 <span class="value flo-id">${floId}</span>
+                            </div>
+                            <div class="flex flex-direction-column" style="flex-basis: 36ch">
+                                <span class="label">BTC address</span>
+                                <span class="value btc-id">${btcId}</span>
                             </div>
                             <div class="flex flex-direction-column">
                                 <span class="label">Invested</span>
@@ -829,10 +840,11 @@
             }
         }
 
-        getRef('search_bonds').addEventListener('input', debounce(() => {
+        getRef('search_bonds').addEventListener('input', debounce((e) => {
             let hiddenElements = 0;
+            const searchKey = e.target.value.trim().toLowerCase();
             [...getRef('bond_list').children].forEach(bond => {
-                if (bond.dataset.floId.toLowerCase().includes(getRef('search_bonds').value.toLowerCase())) {
+                if (bond.dataset.floId.toLowerCase().includes(searchKey) || bond.dataset.btcId.toLowerCase().includes(searchKey)) {
                     bond.classList.remove('hidden')
                 } else {
                     bond.classList.add('hidden')
