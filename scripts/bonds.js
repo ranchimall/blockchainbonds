@@ -173,19 +173,20 @@ const blockchainBond = (function () {
 function refreshBlockchainData() {
     return new Promise((resolve, reject) => {
         compactIDB.readData("appendix", "lastTx" + floGlobals.adminID).then(lastTx => {
-            floBlockchainAPI.readData(floGlobals.adminID, {
-                ignoreOld: lastTx,
-                senders: floExchangeAPI.nodeList.concat(floGlobals.adminID), //sentOnly: true,
-                tx: true,
-                filter: d => d.startsWith(blockchainBond.productStr)
-            }).then(result => {
-                result.data.reverse().forEach(d => {
+            var query_options = { tx: true, filter: d => d.startsWith(blockchainBond.productStr) };
+            query_options.senders = floExchangeAPI.nodeList.concat(floGlobals.adminID); //sentOnly: true,
+            if (typeof lastTx == 'number')  //lastTx is tx count (*backward support)
+                query_options.ignoreOld = lastTx;
+            else if (typeof lastTx == 'string') //lastTx is txid of last tx
+                query_options.after = lastTx;
+            floBlockchainAPI.readData(floGlobals.adminID, query_options).then(result => {
+                result.items.reverse().forEach(d => {
                     if (d.senders.has(floGlobals.adminID) && /bond start/i.test(d.data))
                         compactIDB.addData('bonds', d.data, d.txid);
                     else
                         compactIDB.addData('closings', d.data, d.txid);
                 });
-                compactIDB.writeData('appendix', result.totalTxs, "lastTx" + floGlobals.adminID);
+                compactIDB.writeData('appendix', result.lastItem, "lastTx" + floGlobals.adminID);
                 resolve(true);
             }).catch(error => reject(error))
         }).catch(error => reject(error))
